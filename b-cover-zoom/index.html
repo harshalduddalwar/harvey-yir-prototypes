@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harvey Year in Review B</title>
+<meta name="description" content="Scroll-driven prototype B of the Harvey 2026 Year in Review microsite: cover zoom into a long editorial page.">
+<link rel="preload" href="fonts/harvey-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/harvey-serif.otf" as="font" type="font/otf" crossorigin>
+<style>
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif-italic.otf) format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'Harvey Sans';src:url(fonts/harvey-sans.woff2) format('woff2-variations'),url(fonts/harvey-sans.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+/* Hero: a pinned stage holding two 1440×800 artboards — .art (fits the viewport) for type,
+   .art.cover (covers it) for imagery. Below the hero, one long 1440-wide artboard (.pa) scaled to
+   the viewport width; every element sits at its Figma coordinates (page y minus the 1128px hero image). */
+:root{
+  --cream:#FDFCE7; --ink:#0F0E0D; --night:#0F0E0D; --forest:#282E17; --pill:#E3E2CF; --sage:#D6DAC8;
+  --serif:'Harvey Serif','Iowan Old Style',Georgia,serif;
+  --sans:'Harvey Sans','Helvetica Neue',Arial,sans-serif;
+  --s:1; --sc:1; --k:1;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+p,h1,h2,h3,h4{margin:0;font-weight:400}
+img{display:block}
+.abs{position:absolute}
+.label{font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase}
+.num{font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- hero ---------- */
+#hero{position:relative}
+#hero .stage{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--cream);contain:layout paint}
+.art{position:absolute;left:50%;top:50%;width:1440px;height:800px;transform:translate(-50%,-50%) scale(var(--s))}
+.art.cover{transform:translate(-50%,-50%) scale(var(--sc))}
+#heroImg{position:absolute;left:0;top:0;width:3171px;max-width:none;opacity:0;transform-origin:0 0;will-change:transform,opacity}
+#cover{left:426.36px;top:20px;width:587.27px;height:760px;transform-origin:50% 50%;will-change:transform,opacity}
+#cover img{width:100%;height:100%}
+.intro{left:20px;top:20px;width:243px;font:400 14px/19px var(--serif)}
+.ctas{left:20px;top:106px;display:grid;gap:4px;justify-items:start}
+.ctas a{display:inline-flex;align-items:center;height:28px;padding:0 14px;background:var(--pill);color:var(--ink);text-decoration:none;font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase;transition:background .2s}
+.ctas a:hover{background:#D6D4BD}
+.yir{left:670px;top:389.4px;width:100px;text-align:center;color:var(--cream);text-transform:uppercase;will-change:transform}
+.yir b{display:block;font:400 12.5px/12.7px var(--serif)}
+.yir span{display:block;font:400 11.5px/12.7px var(--sans);letter-spacing:.01em}
+.scroll{left:1373px;top:772px;width:47px;text-align:right}
+#pageTop{left:0;top:0;width:1440px;height:1128px;will-change:transform}
+.hero-h{left:507px;top:355px;width:427px;text-align:center;color:var(--cream);font:400 44px/45px var(--serif);letter-spacing:-.01em;opacity:0}
+.dropcap{width:70px;height:70px;object-fit:cover}
+.drop-text{left:953px;top:783px;width:426px;color:var(--cream);font:400 12.5px/17px var(--serif);text-align:justify;hyphens:auto}
+.drop-text p + p{margin-top:9px}
+.drop-text p:first-child{text-indent:74px}
+
+/* ---------- long page ---------- */
+.page{position:relative;overflow:hidden}
+.pa{position:absolute;left:0;top:0;width:1440px;transform-origin:0 0;transform:scale(var(--k))}
+.bg{position:absolute;left:0;width:1440px}
+[data-rv]{will-change:transform,opacity}
+.ch-label{font:400 22px/32px var(--serif);text-transform:uppercase;letter-spacing:.01em}
+.ch-head{font:400 46px/48px var(--serif);letter-spacing:-.012em}
+.ch-head .sans{font-family:var(--sans);font-weight:300;letter-spacing:-.025em}
+.ch-para{font:400 14px/19px var(--serif)}
+.block .label{display:block;margin-bottom:10px}
+.block h3{font:400 30px/32px var(--serif);letter-spacing:-.005em}
+.block p{font:400 14px/19px var(--sans);margin-top:10px}
+.plate{overflow:hidden}
+.big{position:absolute;font-weight:300;font-family:var(--sans);letter-spacing:-.045em;color:var(--cream);white-space:nowrap}
+.plate-chart{background:url(img/chart.jpg) 59.6% 65.3%/364% auto}
+.chart line,.chart path{stroke:var(--cream);stroke-width:1.5;fill:none}
+.chart .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.chart rect{fill:var(--cream)}
+.plate-dots{background:#2F2609}
+.dot{position:absolute;width:22.75px;height:22.75px;border-radius:50%;background:#D9D9D7;opacity:.28;transition:opacity .3s}
+.dot.on{opacity:1}
+.plate-map{background:var(--sage)}
+.plate-map img{position:absolute;left:-20%;top:-8%;width:165%;max-width:none;will-change:transform}
+.plate-map::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--sage) 0%,rgba(214,218,200,.75) 25%,rgba(214,218,200,0) 55%)}
+.plate-map .big,.plate-map .rule{z-index:1}
+.rule{position:absolute;height:1.5px;background:var(--cream)}
+.fig{width:538px;height:187px;border-top:1.5px solid var(--ink)}
+.fig b{position:absolute;left:-6px;top:14px;font:300 160px/136px var(--sans);letter-spacing:-.045em}
+.fig span{position:absolute;left:0;top:176px;font:400 14px/14px var(--sans)}
+.foot{font:400 10px/13px var(--sans);color:rgba(15,14,13,.75)}
+.night{color:var(--cream)}
+.p-img{overflow:hidden;background:#000}
+.p-img img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.p-title h3{font:400 36px/40px var(--serif)}
+.p-title p{font:400 14px/20px var(--sans);margin-top:10px;max-width:539px;opacity:.9}
+.thumb{overflow:hidden;border-radius:2px}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.arrow{display:grid;place-items:center;width:24px;height:24px;border-radius:3px;background:var(--cream);color:var(--ink);font:500 14px/1 var(--sans)}
+.forest{color:var(--cream)}
+.months{display:flex;gap:20px}
+.months span{font:400 10px/1 var(--sans);text-transform:uppercase;opacity:.4;transition:opacity .35s}
+.months span.on{opacity:1}
+.vline{width:1.5px;background:rgba(253,252,231,.75)}
+.launch{width:427px;opacity:.35;transition:opacity .45s}
+.launch.on{opacity:1}
+.launch .label{display:block;margin-bottom:10px}
+.launch h4{font:400 30px/35px var(--serif)}
+.launch p{font:400 13px/13px var(--sans);margin-top:10px}
+.legend{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--sans)}
+.legend i{width:16.5px;height:16.5px;border-radius:50%;background:#C9A64B;box-shadow:inset 0 0 0 3.5px #FDFCE7,inset 0 0 0 6px #6E5A1A}
+.legend i.soon{background:#FDFCE7}
+.offices{overflow:hidden}
+.offices img{width:100%;height:100%;object-fit:cover;will-change:transform}
+.research{overflow:hidden}
+.research .bgimg{position:absolute;left:-21px;top:-1700px;width:1481px;height:2537px;background:url(img/research-soft.jpg) 0 0/100% 100%;will-change:transform}
+.research p{color:var(--cream);font:400 44px/53px var(--serif);letter-spacing:-.005em}
+
+/* ---------- chrome ---------- */
+.mono{left:20px;top:745px;width:34.5px;height:34.5px;color:var(--ink);transition:color .35s}
+.mono.light{color:var(--cream)}
+.bar{position:fixed;left:0;top:0;height:2px;width:100%;z-index:50;pointer-events:none}
+.bar i{display:block;height:100%;background:#B8432B;transform-origin:left;transform:scaleX(0)}
+</style>
+</head>
+<body>
+<div class="bar"><i id="bar"></i></div>
+
+
+<!-- ============ HERO · board frames 1–5 ============ -->
+<section id="hero">
+  <div class="stage">
+    <div class="art cover"><img id="heroImg" src="img/hero.jpg" alt="Painting of a woman in period dress typing on a laptop at a draped table" fetchpriority="high"></div>
+    <div class="art">
+      <div class="abs" id="cover"><img src="img/cover.jpg" alt="Harvey Year in Review cover: the painting framed by gold swashes" fetchpriority="high"></div>
+      <p class="abs intro" id="intro">A look back at the year when the future of legal AI became reality—and the people, progress, and possibilities that brought it to life.</p>
+      <nav class="abs ctas" id="ctas" aria-label="Exits">
+        <a href="#" data-door>Get The Full Report</a><a href="#" data-door>Book A Demo</a><a href="#" data-door>Join Us</a>
+      </nav>
+      <div class="abs" id="pageTop">
+        <h1 class="abs hero-h" id="heroH">A New Standard for Legal Work</h1>
+        <img class="abs dropcap" id="dropI" src="img/dropcap-i.jpg" alt="I" style="left:953px;top:727px">
+        <div class="abs drop-text" id="dropText">
+          <p>n 2026, Harvey expanded what legal AI could do and what legal teams could achieve as a result. For years, lawyers imagined what this technology could do for their work, and most of what they got was small.</p>
+          <p>2026 changed that. Agents, long-running work, and a connected platform made the imagined version real, for law firms and in-house teams alike.</p>
+        </div>
+      </div>
+      <div class="abs yir" id="yir"><b>Year in Review</b><span>MMXXVI</span></div>
+      <span class="abs label scroll" id="scrollCue">Scroll</span>
+      <svg class="abs mono" id="mono" viewBox="674 354 92 92" aria-label="Harvey"><path fill="currentColor" fill-rule="evenodd" d="M691.25 354H748.75L766 371.25V428.75L748.75 446H691.25L674 428.75V371.25L691.25 354Z M747.312 424.438H722.875L730.062 417.25V404.313H709.938V417.25L717.125 424.438H692.688L699.875 417.25V382.75L692.688 375.562H717.125L709.938 382.75V395.688H730.062V382.75L722.875 375.562H747.312L740.125 382.75V417.25L747.312 424.438Z"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LONG PAGE ============ -->
+<section class="page" id="page">
+  <div class="pa" id="pa">
+    <div class="bg" style="top:0;height:2665px;background:var(--cream)"></div>
+    <div class="bg" style="top:2665px;height:800px;background:var(--night)"></div>
+    <div class="bg" style="top:3465px;height:1990px;background:var(--forest)"></div>
+
+    <!-- Chapter I -->
+    <div class="abs ch-label" data-rv style="left:60px;top:61px">Chapter I</div>
+    <h2 class="abs ch-head" data-rv style="left:60px;top:113px;width:600px"><span class="sans">2026 At A Glance</span><br>The Year Legal Work<br>Went Agentic</h2>
+    <p class="abs ch-para" data-rv style="left:60px;top:277px;width:426px">From customer adoption to product innovation and global expansion, 2026 marked a defining year for Harvey, raising the bar for what legal AI can achieve.</p>
+
+    <!-- Customers -->
+    <div class="abs plate plate-chart" data-rv id="chartPlate" style="left:60px;top:466px;width:650px;height:580px">
+      <svg class="abs chart" viewBox="0 0 762 680" style="inset:0;width:100%;height:100%" aria-hidden="true">
+        <line x1="20" y1="260" x2="742" y2="260"/><line x1="20" y1="360" x2="742" y2="360"/><line x1="20" y1="460" x2="742" y2="460"/><line x1="20" y1="560" x2="742" y2="560"/><line x1="20" y1="660" x2="744" y2="660"/>
+        <line x1="20" y1="650" x2="20" y2="670"/><line x1="201" y1="650" x2="201" y2="670"/><line x1="382" y1="650" x2="382" y2="670"/><line x1="563" y1="650" x2="563" y2="670"/><line x1="744" y1="650" x2="744" y2="670"/>
+        <g id="steps"><path class="draw" pathLength="1" d="M201 670V634"/><path class="draw" pathLength="1" d="M206 635H380"/><path class="draw" pathLength="1" d="M382 650V586"/><path class="draw" pathLength="1" d="M388 586H562"/><path class="draw" pathLength="1" d="M563 650V548"/><path class="draw" pathLength="1" d="M568 548H742"/><path class="draw" pathLength="1" d="M744 650V281"/></g>
+        <g id="marks"><rect x="195" y="628" width="12" height="12" rx="2"/><rect x="376" y="580" width="12" height="12" rx="2"/><rect x="556" y="541" width="12" height="12" rx="2"/><rect x="737" y="275" width="12" height="12" rx="2"/></g>
+      </svg>
+      <div class="big" id="cnt0" style="left:17px;top:17px;font-size:150px;line-height:145px">3,500+</div>
+    </div>
+    <div class="abs block" data-rv style="left:730px;top:466px;width:315px"><span class="label">Customers</span><h3>Harvey more than tripled its customer base in 2026.</h3><p>Over 3,500 organizations now run on Harvey.</p></div>
+
+    <!-- Leaders -->
+    <div class="abs plate plate-dots" data-rv id="dotPlate" style="left:730px;top:765px;width:315px;height:281px"></div>
+    <div class="abs block" data-rv style="left:1065px;top:765px;width:315px"><span class="label">Leaders</span><h3>80% of the Am Law 100, and five of the Fortune 10.</h3><p>Plus more than 1,600 in-house legal teams.</p></div>
+
+    <!-- Reach -->
+    <div class="abs plate plate-map" data-rv id="reachPlate" style="left:730px;top:1066px;width:650px;height:580px">
+      <img id="reachMap" src="img/reach-map.jpg" alt="">
+      <div class="big" id="cnt2" style="left:17px;top:32px;font-size:150px;line-height:116px">200,000+</div>
+      <div class="rule" style="left:17px;top:175px;width:616px"></div>
+    </div>
+    <div class="abs block" data-rv style="left:730px;top:1666px;width:427px"><span class="label">Reach</span><h3>200,000+ professionals, across 85+ countries.</h3><p>Law firms, in-house teams, and the mid-market, on every continent Harvey serves.</p></div>
+
+    <!-- The year in figures -->
+    <span class="abs label" data-rv style="left:60px;top:1916px">The Year in Figure</span>
+    <div class="abs fig" data-rv style="left:60px;top:1964px"><b data-to="1600" data-suf="+">1,600+</b><span>In-House Legal Teams</span></div>
+    <div class="abs fig" data-rv style="left:60px;top:2191px"><b data-to="20" data-suf="%+">20%+</b><span>Of The Fortune 500, including 5 of The Fortune 10</span></div>
+    <div class="abs fig" data-rv style="left:60px;top:2418px"><b data-to="1400" data-suf="+">1,400+</b><span>Employees Worldwide, More than triple 2025</span></div>
+    <p class="abs foot" data-rv style="left:730px;top:2418px;width:427px">Footnote and sources to come. The design file holds placeholder text here.</p>
+
+    <!-- Product and research innovation -->
+    <div class="abs night" style="left:0;top:2665px;width:1440px;height:800px">
+      <span class="abs label" data-rv style="left:60px;top:60px">Product and Research Innovation</span>
+      <span class="abs label num" data-rv style="left:507px;top:60px">01</span>
+      <span class="abs label num" data-rv style="left:507px;top:731px">02</span>
+      <div class="abs p-img" data-rv id="prodImg" style="left:618px;top:60px;width:762px;height:421.6px"><img src="img/harvey-ii.jpg" alt="A lawyer working at a laptop in a dim office"></div>
+      <div class="abs p-title" data-rv style="left:618px;top:502px;width:600px"><h3>Harvey II</h3><p>Introduced a more connected platform built around legal matters, with Spaces, Memory, and AI agents that can carry work forward.</p></div>
+      <div class="abs thumb" data-rv style="left:60px;top:551px;width:203px;height:112.3px"><img src="img/graph.jpg" alt="Harvey product screenshot"></div>
+      <p class="abs" data-rv style="left:60px;top:673px;width:280px;font:400 14px/18px var(--sans)">Next: Harvey Tenet, Harvey's first model trained for legal work.</p>
+      <span class="abs arrow" data-rv style="left:60px;top:715px" aria-hidden="true">↗</span>
+    </div>
+
+    <!-- The year in launches -->
+    <div class="abs forest" id="launches" style="left:0;top:3465px;width:1440px;height:1360px">
+      <div class="abs vline" style="left:933px;top:0;height:1360px"></div>
+      <div class="abs" id="tlHead" style="left:60px;top:60px;width:820px">
+        <div class="block" data-rv><span class="label">The Year in Launches</span><h3>Shipped in<br>2026</h3></div>
+        <div class="months" id="months" data-rv style="margin-top:30px">
+          <span>January</span><span>February</span><span>March</span><span>April</span><span>May</span><span>June</span><span>July</span><span>August</span><span>September</span><span>October</span><span>November</span><span>December</span>
+        </div>
+      </div>
+      <div class="abs launch" data-m="0" style="left:953px;top:120px"><span class="label">Date</span><h4>Harvey II</h4><p>Spaces, Memory, and AI agents around the legal matter</p></div>
+      <div class="abs launch" data-m="1" style="left:953px;top:254px"><span class="label">Date</span><h4>Legal Agent Benchmark</h4><p>Open-sourced, with 1,200+ long-horizon legal tasks</p></div>
+      <div class="abs launch" data-m="2" style="left:953px;top:388px"><span class="label">Date</span><h4>Harvey Tenet</h4><p>Harvey's first model trained for legal work</p></div>
+      <div class="abs launch" data-m="3" style="left:953px;top:522px"><span class="label">Date</span><h4>Harvey Graph</h4><p>Connected legal and organizational context</p></div>
+      <div class="abs launch" data-m="4" style="left:953px;top:656px"><span class="label">May</span><h4>Transformation Office</h4><p>Helping legal leaders rethink how work gets done</p></div>
+      <div class="abs launch" data-m="5" style="left:953px;top:790px"><span class="label">Date</span><h4>User-level Memory</h4><p>Across web, mobile, Word, Outlook, and agents</p></div>
+      <div class="abs launch" data-m="6" style="left:953px;top:924px"><span class="label">Date</span><h4>Agent Builder</h4><p>Text-based agent creation, pre-built agents, and routines</p></div>
+      <div class="abs launch" data-m="7" style="left:953px;top:1058px"><span class="label">Q3</span><h4>U.S. Case Law</h4><p>With major legal research source expansion</p></div>
+      <div class="abs launch" data-m="9" style="left:953px;top:1192px"><span class="label">Q4</span><h4>Space Memory</h4><p>Matter- and project-specific knowledge carried forward</p></div>
+    </div>
+
+    <!-- Global expansion -->
+    <div class="abs block forest" data-rv style="left:60px;top:4856px;width:427px"><span class="label">Global Expansion</span><h3>New Offices Across Three Continents</h3><p>Harvey opened offices in Chicago, Dallas, Dublin, Madrid, Munich, Paris, and Singapore, extending its presence across North America, Europe, and Asia. Additional offices were announced in Boston, Mexico City, and Tokyo.</p></div>
+    <div class="abs legend forest" data-rv style="left:60px;top:5348px"><i></i>Offices Opened In 2026</div>
+    <div class="abs legend forest" data-rv style="left:60px;top:5374px"><i class="soon"></i>Offices Announced</div>
+    <div class="abs offices" data-rv id="officeMap" style="left:507px;top:4856px;width:873px;height:535px"><img src="img/offices-map.jpg" alt="Map of Harvey offices opened and announced in 2026"></div>
+
+    <!-- Research -->
+    <div class="abs research" id="research" style="left:0;top:5451px;width:1440px;height:800px">
+      <div class="bgimg" id="resA"></div>
+      <p class="abs" data-rv style="left:730px;top:475px;width:650px">Our research connects expert-defined legal standards with new approaches to evaluating, training, and improving models and agents.</p>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

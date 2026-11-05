@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harvey Year in Review</title>
+<meta name="description" content="Scroll-driven prototype of the Harvey 2026 Year in Review microsite, built from the Scrolling Experience Board and design frames.">
+<link rel="preload" href="fonts/harvey-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/harvey-serif.otf" as="font" type="font/otf" crossorigin>
+<style>
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif-italic.otf) format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'Harvey Sans';src:url(fonts/harvey-sans.woff2) format('woff2-variations'),url(fonts/harvey-sans.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+/* Every stage holds a 1440×800 artboard (.art) using the Figma frame's own coordinates.
+   --s fits the artboard inside the viewport; --sc covers it, for full-bleed imagery. */
+:root{
+  --cream:#FDFCE7; --ink:#0F0E0D; --umber:#2F2609; --night:#100E0C; --black:#000; --sage:#D6DAC8;
+  --serif:'Harvey Serif','Iowan Old Style',Georgia,serif;
+  --sans:'Harvey Sans','Helvetica Neue',Arial,sans-serif;
+  --s:1; --sc:1;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.stage{contain:layout paint}
+.yir,.hero-h,.hero-p,.card,.r-card,.plate,.track,.bleed,.mapwrap,.st-text .abs,.in-text > div,.fig-row,.ch-label,.ch-head,.bleed-text{will-change:transform,opacity}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+p,h1,h2,h3{margin:0;font-weight:400}
+img{display:block}
+
+.pin{position:relative}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.frame{position:relative;height:100vh;overflow:hidden}
+.art{position:absolute;left:50%;top:50%;width:1440px;height:800px;transform:translate(-50%,-50%) scale(var(--s))}
+.art.cover{transform:translate(-50%,-50%) scale(var(--sc))}
+.abs{position:absolute}
+.label{font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase}
+.serif{font-family:var(--serif)}
+.num{font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- hero ---------- */
+#hero{height:900vh}
+#hero .stage{background:var(--cream)}
+#heroClip{position:absolute;inset:0;background:var(--ink);overflow:hidden;will-change:clip-path}
+#heroImg{position:absolute;left:0;top:0;width:2225px;max-width:none;opacity:0;transform-origin:0 0;will-change:transform,opacity}
+#hGlyph{left:692.6875px;top:375.5625px;width:54.625px;height:48.875px;fill:var(--cream)}
+.yir{left:647px;top:385px;width:147px;text-align:center;color:var(--cream);font:400 13px/18px var(--serif);text-transform:uppercase;opacity:0;transform-origin:50% 0}
+.hero-h{left:284px;top:310px;width:873px;text-align:center;color:var(--cream);font:400 86px/90px var(--serif);letter-spacing:-.01em;opacity:0}
+.hero-p{left:395px;top:373px;width:650px;text-align:center;color:var(--cream);font:400 20px/32px var(--serif);opacity:0}
+.cue{left:0;width:1440px;top:740px;text-align:center;color:var(--ink)}
+.monogram-in{animation:fadeIn 1.4s ease .2s backwards}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.card{left:263px;top:231px;width:914px;height:914px;background:var(--cream);will-change:transform}
+.dropcap{position:absolute;left:20px;top:20px;width:70px;height:70px;object-fit:cover}
+.card-text{position:absolute;left:20px;top:76px;width:315px;font:400 11.5px/15.5px var(--serif);text-align:justify;hyphens:auto}
+.card-text p + p{margin-top:8px}
+.card-text p:first-child{text-indent:74px}
+.card-video{position:absolute;left:355px;top:20px;width:539px;height:299px;object-fit:cover;object-position:50% 40%}
+.card-cap{position:absolute;left:355px;top:328px;display:flex;align-items:center;gap:5px;font:400 10px/14px var(--sans)}
+.card-cap i{width:14px;height:14px;border-radius:50%;background:var(--ink);display:grid;place-items:center}
+.card-cap i::after{content:"";border-left:5px solid var(--cream);border-top:3.5px solid transparent;border-bottom:3.5px solid transparent;margin-left:1.5px}
+
+/* ---------- chapter openers ---------- */
+.chapter{background:var(--black);color:var(--cream)}
+.chapter .art > div{will-change:transform,opacity}
+.ch-label{left:0;width:1440px;top:223px;text-align:center;font:400 17px/32px var(--serif);text-transform:uppercase;letter-spacing:.02em}
+.ch-head{left:0;width:1440px;top:265px;text-align:center;font:400 84px/90px var(--serif);letter-spacing:-.015em}
+.ch-head .sans{font-family:var(--sans);font-weight:300;letter-spacing:-.025em}
+
+/* ---------- full-bleed image + text ---------- */
+.bleed{position:absolute;inset:-12% -3%;background-size:cover;will-change:transform}
+.veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,14,13,.82) 0%,rgba(15,14,13,.45) 35%,rgba(15,14,13,0) 60%)}
+.bleed-text{left:60px;top:60px;width:650px;color:var(--cream);font:400 44px/53px var(--serif);letter-spacing:-.005em}
+.bleed-text span{transition:none}
+
+/* ---------- pinned stats ---------- */
+#stats{height:420vh}
+#stats .stage{background:var(--cream)}
+.st-text{left:60px;top:60px;width:427px}
+.st-text .abs{left:0;top:0;width:427px;opacity:0}
+.st-text .label{display:block;margin-bottom:8px}
+.st-text h3{font:400 30px/32px var(--serif);letter-spacing:-.005em}
+.st-text p{font:400 14px/19px var(--sans);margin-top:8px}
+.st-foot{left:60px;top:690px;width:427px;font:400 10px/13px var(--sans);color:rgba(15,14,13,.7)}
+.plates{left:618px;top:60px;width:762px;height:680px;overflow:hidden}
+.plate{position:absolute;inset:0;overflow:hidden;will-change:transform}
+.plate-chart{background:url(img/chart.jpg) 59.6% 65.4%/364% auto}
+.plate-chart::before{content:"";position:absolute;inset:0;background:rgba(40,46,20,.12)}
+.big{position:absolute;left:20px;top:20px;font:300 170px/170px var(--sans);letter-spacing:-.045em;color:var(--cream)}
+.chart{position:absolute;inset:0}
+.chart line,.chart path{stroke:var(--cream);stroke-width:1.5;fill:none}
+.chart .grid{stroke-width:1.5;opacity:.95}
+.chart .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.chart rect{fill:var(--cream)}
+.plate-dots{background:var(--umber)}
+.dots{position:absolute;left:40px;top:40px;display:grid;grid-template-columns:repeat(10,54px);gap:6.67px}
+.dots i,.dotcol i{width:54px;height:54px;border-radius:50%;background:#D9D9D7;opacity:.28;transition:opacity .25s}
+.dots i.on,.dotcol i.on{opacity:1}
+.dotsep{position:absolute;left:653px;top:40px;width:1.5px;height:600px;background:var(--cream)}
+.dotcol{position:absolute;left:668px;top:40px;display:grid;gap:6.67px}
+.plate-map{background:var(--sage)}
+.plate-map .mapimg{position:absolute;left:-25%;top:-10%;width:170%;max-width:none;opacity:.75;filter:blur(.6px) saturate(.6);will-change:transform}
+.plate-map::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--sage) 0%,rgba(214,218,200,.7) 22%,rgba(214,218,200,0) 50%)}
+.plate-map .big,.plate-map .rule{z-index:1}
+.rule{position:absolute;left:20px;top:210px;width:722px;height:1.5px;background:var(--cream)}
+
+/* ---------- year in figures ---------- */
+.figures{background:var(--umber);color:var(--cream)}
+.fig-row{left:638px;width:742px;height:187px;border-top:1.5px solid var(--cream)}
+.fig-row b{display:block;font:300 150px/124px var(--sans);letter-spacing:-.045em;margin-top:14px}
+.fig-row span{position:absolute;left:0;top:162px;font:400 14px/18px var(--sans)}
+
+/* ---------- innovation ---------- */
+#innov{height:340vh}
+#innov .stage{background:var(--night);color:var(--cream)}
+.in-img{left:618px;top:60px;width:762px;height:421px;overflow:hidden;background:#000}
+.in-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:clip-path,transform}
+.in-text{left:618px;top:502px;width:600px}
+.in-text > div{position:absolute;left:0;top:0;width:600px;opacity:0}
+.in-text h3{font:400 36px/40px var(--serif)}
+.in-text p{font:400 14px/20px var(--sans);margin-top:10px;max-width:500px;opacity:.9}
+.in-count{left:507px;font:400 10px/1 var(--sans)}
+.in-prev{left:60px;top:551px;width:280px}
+.in-prev .thumb{width:203px;height:112px;overflow:hidden;position:relative;border-radius:2px}
+.in-prev .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+.in-prev .thumb img.on{opacity:1}
+.in-prev p{font:400 14px/18px var(--sans);margin-top:10px;min-height:36px}
+.in-prev .arrow{display:grid;place-items:center;width:24px;height:24px;margin-top:6px;border-radius:3px;background:var(--cream);color:var(--ink);font:500 14px/1 var(--sans)}
+
+/* ---------- timeline ---------- */
+#launches{height:460vh}
+#launches .stage{background:var(--cream)}
+.tl-head{left:60px;top:60px;width:427px}
+.tl-head h3{font:400 30px/32px var(--serif);margin-top:8px}
+.track{left:0;top:0;width:5600px;height:800px;will-change:transform}
+.axis{position:absolute;left:60px;top:400px;width:5480px;height:1.5px;background:rgba(15,14,13,.18)}
+.axis i{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+.month{position:absolute;top:382px;font:400 10px/1 var(--sans);text-transform:uppercase}
+.launch{position:absolute;top:420px;width:203px}
+.launch .label{display:block;margin-bottom:9px}
+.launch h4{margin:0;font:400 28px/30px var(--serif);letter-spacing:-.005em}
+.launch p{margin-top:8px;font:400 13px/19px var(--sans)}
+.tl-fade{left:933px;top:0;width:507px;height:800px;background:linear-gradient(90deg,rgba(253,252,231,0) 0%,rgba(253,252,231,.75) 60%,var(--cream) 100%)}
+.tl-fade-l{left:-200px;top:0;width:260px;height:800px;background:linear-gradient(90deg,var(--cream) 75%,rgba(253,252,231,0))}
+
+/* ---------- map ---------- */
+.mapsec{background:var(--sage)}
+.mapsec .mapwrap{position:absolute;inset:-4%;will-change:transform}
+.mapsec .mapwrap img{width:100%;height:100%;object-fit:cover}
+.map-card{left:40px;top:40px;width:427px;height:254px;background:var(--cream);padding:20px}
+.map-card h3{font:400 30px/32px var(--serif);margin:8px 0 10px}
+.map-card p{font:400 13px/18px var(--sans)}
+
+/* ---------- research ---------- */
+#research{height:280vh}
+#research .stage{background:#C9BFA8}
+.research-img{background:url(img/research.jpg) 50% 97.9%/103% auto}
+.r-card{left:842px;top:445px;width:538px;height:914px;background:var(--cream);padding:0;will-change:transform}
+.r-card .card-text{width:498px;font-size:12px;line-height:16.5px}
+
+/* ---------- end ---------- */
+.endnote{background:var(--cream)}
+.endnote .art > div{left:0;width:1440px;text-align:center}
+
+/* ---------- review chrome ---------- */
+.where{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(15,14,13,.78);color:var(--cream);font:400 11px/1 var(--sans);letter-spacing:.02em;pointer-events:none}
+.where b{font-weight:500}
+.bar{position:fixed;left:0;top:0;height:2px;width:100%;z-index:50;background:rgba(15,14,13,.15)}
+.bar i{display:block;height:100%;background:#B8432B;transform-origin:left;transform:scaleX(0)}
+
+@media (prefers-reduced-motion:reduce){ .monogram-in{animation:none} }
+</style>
+</head>
+<body>
+<div class="bar"><i id="bar"></i></div>
+<div class="where" aria-hidden="true"><span id="whereN">01</span><b id="whereT">Intro</b></div>
+
+<!-- ============ HERO · storyboard frames 1–8 ============ -->
+<section class="pin" id="hero" data-name="Intro">
+  <div class="stage">
+    <div class="art cover">
+      <div id="heroClip" class="monogram-in"><img id="heroImg" src="img/hero.jpg" decoding="async" fetchpriority="high" alt="Painting of a woman in period dress typing on a laptop at a draped table"></div>
+    </div>
+    <div class="art">
+      <svg id="hGlyph" class="abs monogram-in" viewBox="692.6875 375.5625 54.625 48.875" aria-label="Harvey"><path d="M747.312 424.438H722.875L730.062 417.25V404.313H709.938V417.25L717.125 424.438H692.688L699.875 417.25V382.75L692.688 375.562H717.125L709.938 382.75V395.688H730.062V382.75L722.875 375.562H747.312L740.125 382.75V417.25L747.312 424.438Z"/></svg>
+      <div class="abs yir" id="yir">Year in Review<br>MMXXVI</div>
+      <h1 class="abs hero-h" id="heroH">A New Standard for<br>Legal Work</h1>
+      <p class="abs hero-p" id="heroP">In 2026, Harvey expanded what legal AI could do and what legal teams could achieve as a result.</p>
+      <div class="abs label cue" id="cue">Scroll</div>
+      <div class="abs card" id="card">
+        <img class="dropcap" src="img/dropcap-f.jpg" alt="F">
+        <div class="card-text">
+          <p>or years, lawyers imagined what this technology could do for their work, and most of what they got was small.</p>
+          <p>2026 changed that. Agents, long-running work, and a connected platform made the imagined version real, for law firms and in-house teams alike.</p>
+        </div>
+        <img class="card-video" src="img/card-photo.jpg" alt="Video thumbnail: two Harvey leaders seated against a grey wall">
+        <div class="card-cap"><i></i>The Year in 30 Seconds</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER I ============ -->
+<section class="frame chapter" id="ch1" data-name="Chapter I">
+  <div class="art">
+    <div class="abs ch-label">Chapter I</div>
+    <h2 class="abs ch-head"><span class="sans">2026 At A Glance</span><br>The Year Legal Work<br>Went Agentic</h2>
+  </div>
+</section>
+
+<!-- ============ GLANCE · full-bleed image, text fades in ============ -->
+<section class="pin" id="glance" style="height:200vh" data-name="At a Glance">
+  <div class="stage" style="background:var(--ink)">
+    <div class="bleed" id="glanceImg" style="background-image:url(img/glance.jpg);background-position:58% 80%;background-size:140% auto"></div>
+    <div class="veil"></div>
+    <div class="art"><p class="abs bleed-text" id="glanceText">From customer adoption to product innovation and global expansion, 2026 marked a defining year for Harvey, raising the bar for what legal AI can achieve.</p></div>
+  </div>
+</section>
+
+<!-- ============ STATS · customers → leaders → reach ============ -->
+<section class="pin" id="stats" data-name="Customers · Leaders · Reach">
+  <div class="stage">
+    <div class="art">
+      <div class="abs st-text">
+        <div class="abs" id="stT0"><span class="label">Customers</span><h3>Harvey more than tripled its customer base in 2026.</h3><p>Over 3,500 organizations now run on Harvey.</p></div>
+        <div class="abs" id="stT1"><span class="label">Leaders</span><h3>80% of the Am Law 100, and five of the Fortune 10.</h3><p>Plus more than 1,600 in-house legal teams.</p></div>
+        <div class="abs" id="stT2"><span class="label">Reach</span><h3>200,000+ professionals, across 85+ countries.</h3><p>Law firms, in-house teams, and the mid-market, on every continent Harvey serves.</p></div>
+      </div>
+      <p class="abs st-foot">Footnote and sources to come. The design file holds placeholder text here.</p>
+      <div class="abs plates">
+        <div class="plate plate-chart" id="plate0">
+          <svg class="chart" viewBox="0 0 762 680" aria-hidden="true">
+            <line class="grid" x1="20" y1="260" x2="742" y2="260"/><line class="grid" x1="20" y1="360" x2="742" y2="360"/>
+            <line class="grid" x1="20" y1="460" x2="742" y2="460"/><line class="grid" x1="20" y1="560" x2="742" y2="560"/>
+            <line class="grid" x1="20" y1="660" x2="744" y2="660"/>
+            <line x1="20" y1="650" x2="20" y2="670"/><line x1="201" y1="650" x2="201" y2="670"/><line x1="382" y1="650" x2="382" y2="670"/><line x1="563" y1="650" x2="563" y2="670"/><line x1="744" y1="650" x2="744" y2="670"/>
+            <g id="steps">
+              <path class="draw" pathLength="1" d="M201 670V634"/><path class="draw" pathLength="1" d="M206 635H380"/>
+              <path class="draw" pathLength="1" d="M382 650V586"/><path class="draw" pathLength="1" d="M388 586H562"/>
+              <path class="draw" pathLength="1" d="M563 650V548"/><path class="draw" pathLength="1" d="M568 548H742"/>
+              <path class="draw" pathLength="1" d="M744 650V281"/>
+            </g>
+            <g id="marks">
+              <rect x="195" y="628" width="12" height="12" rx="2"/><rect x="376" y="580" width="12" height="12" rx="2"/>
+              <rect x="556" y="541" width="12" height="12" rx="2"/><rect x="737" y="275" width="12" height="12" rx="2"/>
+            </g>
+          </svg>
+          <div class="big num" id="cnt0">1,000+</div>
+        </div>
+        <div class="plate plate-dots" id="plate1" style="transform:translate3d(0,680px,0)">
+          <div class="dots" id="dots" aria-label="80 of the Am Law 100"></div>
+          <div class="dotsep"></div>
+          <div class="dotcol" id="dotcol" aria-label="5 of the Fortune 10"></div>
+        </div>
+        <div class="plate plate-map" id="plate2" style="transform:translate3d(0,680px,0)">
+          <img class="mapimg" id="reachMap" src="img/map.jpg" alt="">
+          <div class="big num" id="cnt2">0</div>
+          <div class="rule"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ YEAR IN FIGURES ============ -->
+<section class="frame figures" id="figures" data-name="The Year in Figures">
+  <div class="art">
+    <span class="abs label" style="left:60px;top:60px">The Year in Figure</span>
+    <div class="abs fig-row" style="top:60px"><b class="num" data-to="1600" data-suf="+">1,600+</b><span>In-House Legal Teams</span></div>
+    <div class="abs fig-row" style="top:287px"><b class="num" data-to="20" data-suf="%+">20%+</b><span>Of The Fortune 500, including 5 of The Fortune 10</span></div>
+    <div class="abs fig-row" style="top:514px"><b class="num" data-to="1400" data-suf="+">1,400+</b><span>Employees Worldwide, More than triple 2025</span></div>
+  </div>
+</section>
+
+<!-- ============ PRODUCT & RESEARCH INNOVATION ============ -->
+<section class="pin" id="innov" data-name="Product &amp; Research Innovation">
+  <div class="stage">
+    <div class="art">
+      <span class="abs label" style="left:60px;top:60px">Product and Research Innovation</span>
+      <span class="abs in-count num" id="inNow" style="top:60px">01</span>
+      <span class="abs in-count num" id="inNext" style="top:731px">02</span>
+      <div class="abs in-img" id="inImg">
+        <img src="img/harvey-ii.jpg" alt="A lawyer working at a laptop in a dim office">
+        <img src="img/tenet.jpg" alt="Hands holding an open printed brief" style="clip-path:inset(100% 0 0 0)">
+        <img src="img/graph.jpg" alt="Harvey product screenshot" style="clip-path:inset(100% 0 0 0);object-position:50% 20%">
+      </div>
+      <div class="abs in-text" id="inText">
+        <div><h3>Harvey II</h3><p>Introduced a more connected platform built around legal matters, with Spaces, Memory, and AI agents that can carry work forward.</p></div>
+        <div><h3>Harvey Tenet</h3><p>Introduced Harvey's first model trained specifically for legal work, delivering strong performance at significantly lower cost.</p></div>
+        <div><h3>Harvey Graph</h3><p>Introduced connected legal and organizational context to help agents better understand the relationships between documents, people, matters, and legal sources.</p></div>
+      </div>
+      <div class="abs in-prev" id="inPrev">
+        <div class="thumb"><img src="img/tenet.jpg" alt=""><img src="img/graph.jpg" alt="" style="object-position:50% 20%"></div>
+        <p id="inPrevText">Next: Harvey Tenet, Harvey's first model trained for legal work.</p>
+        <span class="arrow" aria-hidden="true">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE YEAR IN LAUNCHES · horizontal timeline ============ -->
+<section class="pin" id="launches" data-name="The Year in Launches">
+  <div class="stage">
+    <div class="art">
+      <div class="abs track" id="track">
+        <div class="axis"><i id="axisFill"></i></div>
+        <div id="months"></div>
+        <div class="launch" style="left:283px"><span class="label">Date</span><h4>Harvey II</h4><p>Spaces, Memory, and AI agents around the legal matter</p></div>
+        <div class="launch" style="left:842px"><span class="label">Date</span><h4>Legal Agent Benchmark</h4><p>Open-sourced, with 1,200+ long-horizon legal tasks</p></div>
+        <div class="launch" style="left:1104px"><span class="label">Date</span><h4>Harvey Tenet</h4><p>Harvey's first model trained for legal work</p></div>
+        <div class="launch" style="left:1590px"><span class="label">Date</span><h4>Harvey Graph</h4><p>Connected legal and organizational context</p></div>
+        <div class="launch" style="left:2108px"><span class="label">May</span><h4>Transformation Office</h4><p>Helping legal leaders rethink how work gets done</p></div>
+        <div class="launch" style="left:2690px"><span class="label">Date</span><h4>User-level Memory</h4><p>Across web, mobile, Word, Outlook, and agents</p></div>
+        <div class="launch" style="left:3170px"><span class="label">Date</span><h4>Agent Builder</h4><p>Text-based agent creation, pre-built agents, routines, and triggers</p></div>
+        <div class="launch" style="left:3640px"><span class="label">Q3</span><h4>U.S. Case Law</h4><p>With major legal research source expansion</p></div>
+        <div class="launch" style="left:4600px"><span class="label">Q4</span><h4>Space Memory</h4><p>Matter- and project-specific knowledge carried forward</p></div>
+      </div>
+      <div class="abs tl-fade-l"></div>
+      <div class="abs tl-fade"></div>
+      <div class="abs tl-head"><span class="label">The Year in Launches</span><h3>Shipped in<br>2026</h3></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GLOBAL EXPANSION · map follows the cursor ============ -->
+<section class="frame mapsec" id="mapsec" data-name="Global Expansion">
+  <div class="mapwrap" id="mapWrap"><img src="img/map.jpg" alt="Map of Harvey offices opened and announced in 2026"></div>
+  <div class="art">
+    <div class="abs map-card">
+      <span class="label">Global Expansion</span>
+      <h3>New Offices Across Three Continents</h3>
+      <p>Harvey opened offices in Chicago, Dallas, Dublin, Madrid, Munich, Paris, and Singapore, extending its presence across North America, Europe, and Asia. Additional offices were announced in Boston, Mexico City, and Tokyo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER II ============ -->
+<section class="frame chapter" id="ch2" data-name="Chapter II">
+  <div class="art">
+    <div class="abs ch-label">Chapter II</div>
+    <h2 class="abs ch-head"><span class="sans">Research At Harvey</span><br>Advancing The Frontier<br>of Legal Intelligence</h2>
+  </div>
+</section>
+
+<!-- ============ RESEARCH · card scrolls in from bottom right ============ -->
+<section class="pin" id="research" data-name="Research">
+  <div class="stage">
+    <div class="bleed research-img" id="resImg"></div>
+    <div class="veil" style="background:linear-gradient(100deg,rgba(60,52,40,.55) 0%,rgba(60,52,40,.2) 40%,rgba(60,52,40,0) 60%)"></div>
+    <div class="art">
+      <p class="abs bleed-text" id="resText">Our research connects expert-defined legal standards with new approaches to evaluating, training, and improving models and agents.</p>
+      <div class="abs r-card" id="rCard">
+        <img class="dropcap" src="img/dropcap-i.jpg" alt="I">
+        <div class="card-text">
+          <p>n 2026, we introduced Harvey Tenet, our first model trained for legal work, achieving frontier-level performance at a fraction of the cost.</p>
+          <p>We also open-sourced the Legal Agent Benchmark (LAB), used by frontier labs to evaluate new models. LAB launched with 1,200+ long-horizon legal tasks graded against expert rubrics and now covers in-house contracting, M&amp;A diligence, firm knowledge, and case law.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="frame endnote" id="endnote" data-name="End of board">
+  <div class="art">
+    <div class="abs label" style="top:370px">End of the scrolling board</div>
+    <div class="abs serif" style="top:392px;font-size:22px;line-height:30px">Chapter III onward is not in the design file yet.</div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

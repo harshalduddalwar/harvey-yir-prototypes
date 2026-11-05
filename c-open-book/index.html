@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harvey Year in Review C</title>
+<meta name="description" content="Prototype C of the Harvey 2026 Year in Review microsite: an open book with a fixed spine, where content simply fades in as you scroll.">
+<link rel="preload" href="fonts/harvey-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/harvey-serif.otf" as="font" type="font/otf" crossorigin>
+<style>
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif-italic.otf) format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'Harvey Sans';src:url(fonts/harvey-sans.woff2) format('woff2-variations'),url(fonts/harvey-sans.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+/* One 1440-wide artboard (.pa) scaled to the viewport width; every element sits at its Figma
+   coordinates. The only motion: elements fade in once as they enter. The spine is a fixed strip. */
+:root{
+  --cream:#FDFCE7; --white:#FFFFFF; --sage:#D9DFCC; --ink:#0F0E0D; --umber:#2F2609; --pill:#E3E2CF; --mapsage:#D6DAC8;
+  --serif:'Harvey Serif','Iowan Old Style',Georgia,serif;
+  --sans:'Harvey Sans','Helvetica Neue',Arial,sans-serif;
+  --k:1;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+p,h1,h2,h3,h4{margin:0;font-weight:400}
+img{display:block}
+.page{position:relative;overflow:hidden;height:calc(var(--h) * var(--k))}
+.pa{position:absolute;left:0;top:0;width:1440px;transform-origin:0 0;transform:scale(var(--k))}
+.pin{position:relative;background:var(--sage)}
+.pin .stage{position:sticky;top:0;height:100vh;overflow:hidden;background:var(--sage)}
+.tl-art{position:absolute;left:0;top:calc(50% - 303.5px * var(--k));width:1440px;height:607px;transform-origin:0 0;transform:scale(var(--k))}
+.track{left:0;top:0;width:5600px;height:607px;will-change:transform}
+.axis{position:absolute;left:0;top:367px;width:5600px;height:1.5px;background:rgba(15,14,13,.22)}
+.axis i{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+.abs{position:absolute}
+.bg{position:absolute;left:0;width:1440px}
+.label{font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase}
+
+/* the one motion: fade in on entry */
+.fade{opacity:0;transition:opacity 1.1s cubic-bezier(.25,.1,.25,1)}
+.fade.in{opacity:1}
+@media (prefers-reduced-motion:reduce){ .fade{opacity:1;transition:none} }
+
+/* the spine: fixed to the centre of the screen, never moves */
+.spine{position:fixed;top:0;bottom:0;left:50%;width:calc(125px * var(--k));transform:translateX(-50%);z-index:30;pointer-events:none;
+  background:url(img/spine.png) center top/100% auto repeat-y;mix-blend-mode:multiply}
+
+.intro{font:400 14px/19px var(--serif)}
+.ctas{display:grid;gap:4px;justify-items:start}
+.ctas a{display:inline-flex;align-items:center;height:28px;padding:0 14px;background:var(--pill);color:var(--ink);text-decoration:none;font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase}
+.ctas a:hover{background:#D6D4BD}
+.crop{overflow:hidden}
+.crop img{position:absolute;max-width:none}
+.dropcap{width:70px;height:70px;object-fit:cover}
+.drop-text{font:400 12.5px/17px var(--serif);text-align:justify;hyphens:auto}
+.drop-text p + p{margin-top:9px}
+.drop-text p:first-child{text-indent:74px}
+.headline{font:400 44px/45px var(--serif);letter-spacing:-.01em;text-align:center}
+.ch-head{font:400 46px/48px var(--serif);letter-spacing:-.012em}
+.ch-head .sans{font-family:var(--sans);font-weight:300;letter-spacing:-.025em}
+.ch-para{font:400 14px/19px var(--serif)}
+.block .label{display:block;margin-bottom:10px}
+.block h3{font:400 30px/35px var(--serif);letter-spacing:-.005em}
+.block p{font:400 14px/19px var(--sans);margin-top:10px}
+.big{position:absolute;font-weight:300;font-family:var(--sans);letter-spacing:-.045em;color:var(--cream);white-space:nowrap}
+.chart line,.chart path{stroke:var(--cream);stroke-width:2.6;fill:none}
+.chart .draw{stroke-dasharray:1;stroke-dashoffset:1}
+#marks rect{opacity:0}
+.chart rect{fill:var(--cream)}
+.dot{position:absolute;width:22.75px;height:22.75px;border-radius:50%;background:#D9D9D7;opacity:.28;transition:opacity .3s}
+.dot.on{opacity:1}
+.rule{position:absolute;height:1.5px;background:var(--ink)}
+.fig b{position:absolute;left:-6px;top:6px;font:300 160px/136px var(--sans);letter-spacing:-.045em}
+.fig span{position:absolute;left:0;top:176px;font:400 14px/14px var(--sans)}
+.launch .label{display:block;margin-bottom:10px}
+.launch h4{font:400 30px/35px var(--serif)}
+.launch p{font:400 13px/16px var(--sans);margin-top:10px}
+.legend{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--sans)}
+.legend i{width:16.5px;height:16.5px;border-radius:50%;background:#C9A64B;box-shadow:inset 0 0 0 3.5px #FDFCE7,inset 0 0 0 6px #6E5A1A}
+.legend i.soon{background:#FDFCE7}
+</style>
+</head>
+<body>
+<div class="spine" aria-hidden="true"></div>
+
+<section class="page" style="--h:5160px">
+  <div class="pa">
+    <!-- grounds -->
+    <div class="bg" style="top:0;height:1600px;background:var(--cream)"></div>
+    <div class="bg" style="top:1600px;height:2718px;background:var(--white)"></div>
+    <div class="bg" style="top:4318px;height:842px;background:var(--sage)"></div>
+
+    <!-- 1 · opening spread -->
+    <p class="abs intro fade" style="left:20px;top:20px;width:243px">A look back at the year when the future of legal AI became reality—and the people, progress, and possibilities that brought it to life.</p>
+    <nav class="abs ctas fade" style="left:20px;top:106px" aria-label="Exits"><a href="#">Get The Full Report</a><a href="#">Book A Demo</a><a href="#">Join Us</a></nav>
+    <svg class="abs fade" style="left:20px;top:745px;width:34.5px;height:34.5px" viewBox="674 354 92 92" aria-label="Harvey"><path fill="#0F0E0D" fill-rule="evenodd" d="M691.25 354H748.75L766 371.25V428.75L748.75 446H691.25L674 428.75V371.25L691.25 354Z M747.312 424.438H722.875L730.062 417.25V404.313H709.938V417.25L717.125 424.438H692.688L699.875 417.25V382.75L692.688 375.562H717.125L709.938 382.75V395.688H730.062V382.75L722.875 375.562H747.312L740.125 382.75V417.25L747.312 424.438Z"/></svg>
+    <div class="abs crop fade" style="left:720px;top:0;width:720px;height:800px">
+      <img src="img/hero.jpg" alt="Painting of a woman in period dress typing on a laptop at a draped table" fetchpriority="high" style="left:-387px;top:-310px;width:1495px;height:1419px;object-fit:cover">
+    </div>
+
+    <!-- 2 · a new standard -->
+    <h1 class="abs headline fade" style="left:142px;top:1155px;width:427px">A New Standard for Legal Work</h1>
+    <img class="abs dropcap fade" src="img/dropcap-i.jpg" alt="I" style="left:895px;top:1029px">
+    <div class="abs drop-text fade" style="left:895px;top:1085px;width:426px">
+      <p>n 2026, Harvey expanded what legal AI could do and what legal teams could achieve as a result. For years, lawyers imagined what this technology could do for their work, and most of what they got was small.</p>
+      <p>2026 changed that. Agents, long-running work, and a connected platform made the imagined version real, for law firms and in-house teams alike.</p>
+    </div>
+
+    <!-- 3 · chapter I -->
+    <h2 class="abs fade" style="left:34.7px;top:1645px;margin:0"><img src="img/chapter-1.svg" alt="Chapter I" width="621" height="119"></h2>
+    <h3 class="abs ch-head fade" style="left:785px;top:1848px;width:600px"><span class="sans">2026 At A Glance</span><br>The Year Legal Work<br>Went Agentic</h3>
+    <p class="abs ch-para fade" style="left:785px;top:2012px;width:426px">From customer adoption to product innovation and global expansion, 2026 marked a defining year for Harvey, raising the bar for what legal AI can achieve.</p>
+
+    <div class="abs crop fade" id="chartPlate" style="left:283px;top:2148px;width:437px;height:390px">
+      <img src="img/chart.jpg" alt="" style="left:-689px;top:-255px;width:1592px;height:779px">
+      <svg class="abs chart" viewBox="0 0 762 680" style="left:0;top:0;width:437px;height:390px" aria-hidden="true">
+        <line x1="20" y1="260" x2="742" y2="260"/><line x1="20" y1="360" x2="742" y2="360"/><line x1="20" y1="460" x2="742" y2="460"/><line x1="20" y1="560" x2="742" y2="560"/><line x1="20" y1="660" x2="744" y2="660"/>
+        <line x1="20" y1="650" x2="20" y2="670"/><line x1="201" y1="650" x2="201" y2="670"/><line x1="382" y1="650" x2="382" y2="670"/><line x1="563" y1="650" x2="563" y2="670"/><line x1="744" y1="650" x2="744" y2="670"/>
+        <g id="steps"><path class="draw" pathLength="1" d="M201 670V634"/><path class="draw" pathLength="1" d="M206 635H380"/><path class="draw" pathLength="1" d="M382 650V586"/><path class="draw" pathLength="1" d="M388 586H562"/><path class="draw" pathLength="1" d="M563 650V548"/><path class="draw" pathLength="1" d="M568 548H742"/><path class="draw" pathLength="1" d="M744 650V281"/></g>
+        <g id="marks"><rect x="195" y="628" width="12" height="12" rx="2"/><rect x="376" y="580" width="12" height="12" rx="2"/><rect x="556" y="541" width="12" height="12" rx="2"/><rect x="737" y="275" width="12" height="12" rx="2"/></g>
+      </svg>
+      <div class="big" id="cnt0" style="left:11px;top:11px;font-size:104px;line-height:97px">3,500+</div>
+    </div>
+    <div class="abs block fade" style="left:283px;top:2548px;width:315px"><span class="label">Customers</span><h3>Harvey more than tripled its customer base in 2026.</h3><p>Over 3,500 organizations now run on Harvey.</p></div>
+
+    <div class="abs fade" id="dotPlate" style="left:720px;top:2392px;width:315px;height:281px;background:var(--umber)" aria-label="80 of the Am Law 100; 5 of the Fortune 10"></div>
+    <div class="abs block fade" style="left:1055px;top:2392px;width:315px"><span class="label">Leaders</span><h3>80% of the Am Law 100, and five of the Fortune 10.</h3><p>Plus more than 1,600 in-house legal teams.</p></div>
+
+    <div class="abs crop fade" id="reachPlate" style="left:720px;top:2673px;width:660px;height:589px;background:var(--mapsage)">
+      <img id="reachMap" src="img/reach-map.jpg" alt="" style="left:-120px;top:-40px;width:1090px">
+      <div class="abs" style="inset:0;background:linear-gradient(180deg,var(--mapsage) 0%,rgba(214,218,200,.75) 25%,rgba(214,218,200,0) 55%)"></div>
+      <div class="big" id="cnt2" style="left:17px;top:33px;font-size:152px;line-height:118px">200,000+</div>
+      <div class="rule" style="left:17px;top:185px;width:625px;background:var(--cream)"></div>
+    </div>
+    <div class="abs block fade" style="left:785px;top:3283px;width:427px"><span class="label">Reach</span><h3>200,000+ professionals, across 85+ countries.</h3><p>Law firms, in-house teams, and the mid-market, on every continent Harvey serves.</p></div>
+
+    <span class="abs label fade" style="left:60px;top:3473px">The Year in Figure</span>
+    <div class="abs fig fade" style="left:60px;top:3521px;width:1380px;height:187px;border-top:1.5px solid var(--ink)"><b data-to="1600" data-suf="+">1,600+</b><span>In-House Legal Teams</span></div>
+    <div class="abs fig fade" style="left:60px;top:3748px;width:1380px;height:187px;border-top:1.5px solid var(--ink)"><b data-to="20" data-suf="%+">20%+</b><span>Of The Fortune 500, including 5 of The Fortune 10</span></div>
+    <div class="abs fig fade" style="left:60px;top:3975px;width:1380px;height:187px;border-top:1.5px solid var(--ink)"><b data-to="1400" data-suf="+">1,400+</b><span>Employees Worldwide, More than triple 2025</span></div>
+
+    <!-- 4 · chapter II -->
+    <div class="abs crop fade" style="left:0;top:4318px;width:720px;height:824px">
+      <img src="img/product.jpg" alt="A lawyer working at a laptop in a dim office" style="left:-662px;top:-181px;width:2003px;height:1006px">
+    </div>
+    <h2 class="abs fade" style="left:741.7px;top:4362px;margin:0"><img src="img/chapter-2.svg" alt="Chapter II" width="658" height="119"></h2>
+    <span class="abs label fade" style="left:971px;top:4481px">Product and Research Innovation</span>
+    <div class="abs fade" style="left:767px;top:4681px;width:427px"><h3 style="font:400 34px/35px var(--serif)">Harvey II</h3><p style="margin-top:10px;width:344px;font:400 14px/18px var(--sans)">Introduced a more connected platform built around legal matters, with Spaces, Memory, and AI agents that can carry work forward.</p></div>
+
+  </div>
+</section>
+
+<!-- the year in launches: pinned; the track runs January → December as you scroll -->
+<section class="pin" id="launches">
+  <div class="stage">
+    <div class="tl-art">
+      <div class="abs block fade" style="left:60px;top:42px;width:427px"><span class="label">The Year in Launches</span><h3>Shipped in<br>2026</h3></div>
+      <div class="abs track" id="track">
+        <div class="axis"><i id="axisFill"></i></div>
+        <span class="abs label" style="left:60px;top:349px">Jan</span><span class="abs label" style="left:547px;top:349px">Feb</span><span class="abs label" style="left:1034px;top:349px">March</span><span class="abs label" style="left:1521px;top:349px">April</span><span class="abs label" style="left:2008px;top:349px">May</span><span class="abs label" style="left:2495px;top:349px">June</span><span class="abs label" style="left:2982px;top:349px">July</span><span class="abs label" style="left:3469px;top:349px">Aug</span><span class="abs label" style="left:3956px;top:349px">Sept</span><span class="abs label" style="left:4443px;top:349px">Oct</span><span class="abs label" style="left:4930px;top:349px">Nov</span><span class="abs label" style="left:5417px;top:349px">Dec</span>
+          <div class="abs launch" style="left:283px;top:387px;width:203px"><span class="label">Date</span><h4>Harvey II</h4><p>Spaces, Memory, and AI agents around the legal matter</p></div>
+          <div class="abs launch" style="left:842px;top:387px;width:203px"><span class="label">Date</span><h4>Legal Agent Benchmark</h4><p>Open-sourced, with 1,200+ long-horizon legal tasks</p></div>
+          <div class="abs launch" style="left:1104px;top:387px;width:203px"><span class="label">Date</span><h4>Harvey Tenet</h4><p>Harvey's first model trained for legal work</p></div>
+          <div class="abs launch" style="left:1590px;top:387px;width:203px"><span class="label">Date</span><h4>Harvey Graph</h4><p>Connected legal and organizational context</p></div>
+          <div class="abs launch" style="left:2108px;top:387px;width:203px"><span class="label">May</span><h4>Transformation Office</h4><p>Helping legal leaders rethink how work gets done</p></div>
+          <div class="abs launch" style="left:2690px;top:387px;width:203px"><span class="label">Date</span><h4>User-level Memory</h4><p>Across web, mobile, Word, Outlook, and agents</p></div>
+          <div class="abs launch" style="left:3170px;top:387px;width:203px"><span class="label">Date</span><h4>Agent Builder</h4><p>Text-based agent creation, pre-built agents, and routines</p></div>
+          <div class="abs launch" style="left:3640px;top:387px;width:203px"><span class="label">Q3</span><h4>U.S. Case Law</h4><p>With major legal research source expansion</p></div>
+          <div class="abs launch" style="left:4600px;top:387px;width:203px"><span class="label">Q4</span><h4>Space Memory</h4><p>Matter- and project-specific knowledge carried forward</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" style="--h:1269px">
+  <div class="pa">
+    <div class="bg" style="top:0;height:1269px;background:var(--cream)"></div>
+
+    <!-- 5 · global expansion -->
+    <div class="abs crop fade" style="left:20px;top:20px;width:680px;height:417px;outline:1px solid var(--ink);outline-offset:-1px"><img src="img/offices-map.jpg" alt="Map of Harvey offices opened and announced in 2026" style="left:0;top:0;width:680px;height:417px;object-fit:cover"></div>
+    <div class="abs block fade" style="left:767px;top:20px;width:440px"><span class="label">Global Expansion</span><h3>New Offices Across Three Continents</h3><p>Harvey opened offices in Chicago, Dallas, Dublin, Madrid, Munich, Paris, and Singapore, extending its presence across North America, Europe, and Asia. Additional offices were announced in Boston, Mexico City, and Tokyo.</p></div>
+    <div class="abs legend fade" style="left:767px;top:563px"><i></i>Offices Opened In 2026</div>
+    <div class="abs legend fade" style="left:767px;top:589px"><i class="soon"></i>Offices Announced</div>
+
+    <!-- 6 · research -->
+    <p class="abs fade" style="left:60px;top:782px;width:427px;font:400 24px/26px var(--serif)">Our research connects expert-defined legal standards with new approaches to evaluating, training, and improving models and agents.</p>
+    <div class="abs crop fade" style="left:720px;top:782px;width:720px;height:487px"><img src="img/research-soft.jpg" alt="Painting of scholars working on laptops in a cathedral" style="left:-10px;top:-768px;width:741px;height:1268px"></div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+/* Fades stay simple (once, on entry). Data motion matches prototypes A and B: values count up,
+   chart strokes draw, circles light, the map drifts and the launches run January → December.
+   One rAF loop reads Lenis's smoothed scroll; positions are measured once per resize. */
+(function(){
+  const root=document.documentElement, $=id=>document.getElementById(id);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const seg=(p,a,b)=>clamp((p-a)/(b-a));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const io=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const out=t=>1-Math.pow(1-t,3);
+  const fmt=n=>Math.round(n).toLocaleString('en-US');
+  const r2=v=>Math.round(v*100)/100;
+  function css(el,prop,val){ const k='_'+prop; if(el[k]!==val){ el[k]=val; el.style[prop]=val; } }
+  function txt(el,val){ if(el._txt!==val){ el._txt=val; el.textContent=val; } }
+
+  // leaders plate: 100 Am Law marks and a column of 10 for the Fortune 10
+  const plate=$('dotPlate'), dots=[], col=[];
+  const dot=(x,y,list)=>{ const d=document.createElement('i'); d.className='dot'; d.style.left=x+'px'; d.style.top=y+'px'; plate.appendChild(d); list.push(d); };
+  for(let r=0;r<10;r++) for(let c=0;c<10;c++) dot(16.54+c*25.03,16.54+r*25.03,dots);
+  const sep=document.createElement('i'); Object.assign(sep.style,{position:'absolute',left:'269.5px',top:'16.5px',width:'1.5px',height:'248px',background:'#FDFCE7'}); plate.appendChild(sep);
+  for(let r=0;r<10;r++) dot(275.7,16.54+r*25.03,col);
+
+  // fades: once, on entry
+  const els=[...document.querySelectorAll('.fade')];
+  if('IntersectionObserver' in window){
+    const ob=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); ob.unobserve(e.target); } }),{rootMargin:'0px 0px -8% 0px',threshold:0});
+    els.forEach(el=>ob.observe(el));
+  } else els.forEach(el=>el.classList.add('in'));
+
+  /* ---------- measurements ---------- */
+  let VH=innerHeight, k=1, Y=0;
+  const watch={chart:$('chartPlate'), dots:plate, reach:$('reachPlate'), figs:[...document.querySelectorAll('.fig b')], launches:$('launches')};
+  const pos={};
+  const docTop=el=>el.getBoundingClientRect().top+scrollY;
+  const TRACK_END=60+487*11+260;
+  function measure(){
+    VH=innerHeight; k=innerWidth/1440; root.style.setProperty('--k',k);
+    watch.launches.style.height=(VH+(TRACK_END-1180)*k*0.9)+'px';
+    pos.chart={y:docTop(watch.chart),h:watch.chart.offsetHeight*k};
+    pos.dots={y:docTop(plate),h:plate.offsetHeight*k};
+    pos.reach={y:docTop(watch.reach),h:watch.reach.offsetHeight*k};
+    pos.figs=watch.figs.map(b=>({y:docTop(b.parentNode),h:187*k}));
+    pos.launches={y:docTop(watch.launches),h:watch.launches.offsetHeight};
+  }
+  const viewP=p=>clamp(1-(p.y-Y)/VH);                    // 0 when it meets the fold → 1 at the top
+  const vis=p=>p.y-Y<VH*1.05 && p.y+p.h-Y>-VH*.05;
+
+  /* ---------- renderers ---------- */
+  const steps=[...document.querySelectorAll('#steps path')], marks=[...document.querySelectorAll('#marks rect')];
+  const cnt0=$('cnt0'), cnt2=$('cnt2'), reachMap=$('reachMap'), track=$('track'), axisFill=$('axisFill');
+  let lit=-1, litCol=-1;
+  function render(){
+    if(vis(pos.chart)){
+      const c=seg(viewP(pos.chart),.15,.75);
+      steps.forEach((p,i)=>css(p,'strokeDashoffset',String(r2(1-seg(c*7,i,i+1)))));
+      marks.forEach((m,i)=>css(m,'opacity',String(r2(seg(c*7,i*2+.6,i*2+1)))));
+      txt(cnt0,fmt(lerp(1000,3500,io(c)))+'+');
+    }
+    if(vis(pos.dots)){
+      const d=viewP(pos.dots), L=Math.round(seg(d,.15,.6)*80), LC=Math.round(seg(d,.55,.7)*5);
+      if(L!==lit){ dots.forEach((el,i)=>el.classList.toggle('on',i<L)); lit=L; }
+      if(LC!==litCol){ col.forEach((el,i)=>el.classList.toggle('on',i<LC)); litCol=LC; }
+    }
+    if(vis(pos.reach)){
+      const rp=viewP(pos.reach), m=seg(rp,.15,.7);
+      txt(cnt2,fmt(200000*out(m))+(m>0?'+':''));
+      css(reachMap,'transform',`translate3d(${r2(lerp(0,-50,rp))}px,${r2(lerp(14,-14,rp))}px,0)`);
+    }
+    watch.figs.forEach((b,i)=>{ const p=pos.figs[i]; if(!vis(p)) return; const t=out(seg(viewP(p),.1,.55)); txt(b,fmt(+b.dataset.to*t)+b.dataset.suf); });
+    const L=pos.launches;
+    if(vis(L)){
+      const t=io(seg(clamp((Y-L.y)/(L.h-VH)),.04,.96));
+      css(track,'transform',`translate3d(${r2(-t*(TRACK_END-1180))}px,0,0)`);
+      css(axisFill,'transform',`scaleX(${Math.round(lerp(.03,1,t)*1000)/1000})`);
+    }
+  }
+
+  document.querySelectorAll('.ctas a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+
+  let lenis=null;
+  if(!reduce && window.Lenis){ lenis=new Lenis({lerp:.085,wheelMultiplier:.9,smoothWheel:true}); window.__lenis=lenis; }
+  let lastY=-1;
+  function loop(t){
+    if(lenis){ lenis.raf(t); Y=lenis.animatedScroll; } else Y=scrollY;
+    if(Y!==lastY){ lastY=Y; render(); }
+    requestAnimationFrame(loop);
+  }
+  const remeasure=()=>{ measure(); if(lenis) lenis.resize(); lastY=-1; };
+  addEventListener('resize',remeasure); addEventListener('load',remeasure);
+  if(document.fonts) document.fonts.ready.then(remeasure);
+  measure(); Y=scrollY; render();
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
