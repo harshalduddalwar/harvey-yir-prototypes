@@ -128,13 +128,15 @@
   /* ---------- contents ---------- */
   const toc=$('toc'), tocItems=[];
   spreads.forEach((s,i)=>{
+    if(!s.dataset.toc) return;   // the cover has no entry; tocItems stays indexed by spread
     const [a,b]=s.dataset.toc.split('|'), li=document.createElement('li'), btn=document.createElement('button');
-    let text=a, cls='';
-    if(b!==undefined){ if(a==='sub'){ text=b; cls='sub'; } else { text=a+' · '+b; cls='ch'; } }
+    let text=a, cls='', num='';
+    if(b!==undefined){ if(a==='sub'){ text=b; cls='sub'; } else { text=b; num=a; cls='ch'; } }
     if(i===N-1) cls+=' soon-ish';
-    li.className=cls; btn.innerHTML='<i></i><span class="t"></span>'; btn.querySelector('.t').textContent=text;
+    li.className=cls; btn.innerHTML='<i></i><span class="t"></span>';
+    btn.querySelector('i').textContent=num; btn.querySelector('.t').textContent=text;
     btn.addEventListener('click',()=>go(i));
-    li.appendChild(btn); toc.appendChild(li); tocItems.push(li);
+    li.appendChild(btn); toc.appendChild(li); tocItems[i]=li;
   });
 
   /* ---------- turning ---------- */
@@ -161,6 +163,7 @@
     where.innerHTML=`<b>${String(cur+1).padStart(2,'0')}</b> / ${String(N).padStart(2,'0')}<span> · ${spreads[cur].dataset.name}</span>`;
     btnPrev.disabled=cur===0; btnNext.disabled=cur===N-1;
     tocItems.forEach((li,i)=>li.classList.toggle('on',i===cur));
+    document.body.classList.toggle('closed',cur===0);
     history.replaceState(null,'','#'+(cur+1));
   }
   function go(to,instant){
@@ -188,6 +191,7 @@
   /* ---------- input ---------- */
   btnPrev.addEventListener('click',prev); btnNext.addEventListener('click',next);
   $('restart').addEventListener('click',restart); $('restartIn').addEventListener('click',e=>{ e.stopPropagation(); restart(); });
+  $('home').addEventListener('click',e=>{ e.preventDefault(); restart(); });
   document.querySelectorAll('.ctas a').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); }));
   // click the right page to go on, the left page to go back
   $('book').addEventListener('click',e=>{
@@ -218,5 +222,6 @@
   addEventListener('resize',size); size();
   const h=parseInt(location.hash.slice(1),10);
   go(h>=1&&h<=N?h-1:0,true);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.remove('preload')));
   addEventListener('hashchange',()=>{ const n=parseInt(location.hash.slice(1),10); if(n>=1&&n<=N&&n-1!==cur) go(n-1); });
 })();

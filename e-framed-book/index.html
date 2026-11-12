@@ -35,7 +35,26 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 
 /* ---------- the object ---------- */
 .stage{position:fixed;left:50%;top:calc(50% - 14px);width:1240px;height:800px;transform:translate(-50%,-50%) scale(var(--s))}
-.board{position:absolute;inset:-14px -16px;border-radius:5px;background:linear-gradient(180deg,#3A3011,#2A2208);
+/* closed at the landing: the object slides so the front board sits centred, and only the right
+   half of the book shows; opening slides it back and uncovers the left page from the spine out */
+.obj{position:absolute;inset:0;transition:transform 1.4s cubic-bezier(.55,.05,.25,1)}
+.closed .obj{transform:translate3d(-310px,0,0)}
+.book{clip-path:inset(0 0 0 0);transition:clip-path 1.4s cubic-bezier(.55,.05,.25,1)}
+.closed .book{clip-path:inset(0 0 0 620px)}
+.board{transition:left 1.4s cubic-bezier(.55,.05,.25,1)}
+.closed .board{left:604px}
+.stack.l,.spine{transition:opacity .7s ease .5s,width 1s cubic-bezier(.45,.05,.3,1)}
+.closed .stack.l,.closed .spine{opacity:0;transition-delay:0s}
+.cover .pg.r::before{content:"";position:absolute;left:0;top:0;bottom:0;width:22px;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.08) 60%,rgba(255,255,255,.06) 80%,rgba(0,0,0,0))}
+.landing{position:fixed;left:32px;top:70px;width:260px;z-index:45;display:grid;gap:16px;transition:opacity .6s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.lockup{position:fixed;left:32px;top:32px;width:100px;height:22px;z-index:45}
+.lockup img{display:block}
+.landing-mark{position:fixed;left:32px;bottom:28px;width:72px;height:58px;z-index:45;filter:drop-shadow(0 1px 1px rgba(35,31,32,.18))}
+body:not(.closed) .landing{opacity:0;transform:translate3d(0,-6px,0);pointer-events:none}
+.preload *,.preload *::before{transition:none!important}
+@media (prefers-reduced-motion:reduce){ .obj,.book,.board,.stack.l,.spine,.landing,.landing-mark{transition:none} }
+.board{position:absolute;top:-14px;bottom:-14px;left:-16px;right:-16px;border-radius:5px;background:linear-gradient(180deg,#3A3011,#2A2208);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 2px 3px rgba(47,38,9,.25),0 22px 40px -8px rgba(47,38,9,.32),0 60px 90px -30px rgba(47,38,9,.35)}
 .stack{position:absolute;top:2px;bottom:2px;transition:width 1s cubic-bezier(.45,.05,.3,1);
   background:repeating-linear-gradient(90deg,#F7F5DE 0 1px,#DCD9BF 1px 2px)}
@@ -146,29 +165,33 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .restart:hover{background:#D6D4BD}
 
 /* ---------- index: faint glass on the left ---------- */
-.index{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:50;width:44px;padding:14px 0;border-radius:12px;overflow:hidden;
-  background:rgba(253,252,231,.22);backdrop-filter:blur(16px) saturate(1.15);-webkit-backdrop-filter:blur(16px) saturate(1.15);
-  border:1px solid rgba(255,255,255,.45);box-shadow:0 10px 30px -12px rgba(47,38,9,.18);opacity:.62;
-  transition:width .55s cubic-bezier(.2,.7,.2,1),opacity .4s,background .4s}
-.index:hover,.index:focus-within{width:262px;opacity:1;background:rgba(253,252,231,.5)}
+.index{position:fixed;left:32px;top:50%;transform:translateY(-50%);z-index:50;width:44px;padding:14px 0 6px;overflow:hidden;
+  background:var(--pill);transition:width .55s cubic-bezier(.2,.7,.2,1)}
+.index:hover,.index:focus-within{width:262px}
 .index h2{margin:0 0 8px;padding:0 0 0 16px;font:400 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:rgba(15,14,13,.45);white-space:nowrap;height:10px}
 .index h2 span{opacity:0;transition:opacity .3s}
 .index:hover h2 span,.index:focus-within h2 span{opacity:1;transition-delay:.15s}
 .index ol{list-style:none;margin:0;padding:0}
-.index li button{display:flex;align-items:center;gap:12px;width:100%;height:26px;padding:0 14px 0 16px;text-align:left;white-space:nowrap;color:rgba(15,14,13,.5);transition:color .3s}
+.index li button{display:flex;align-items:center;gap:8px;width:100%;height:21px;padding:0 14px 0 16px;text-align:left;white-space:nowrap;color:rgba(15,14,13,.5);transition:color .3s}
 .index li button:hover{color:var(--ink)}
-.index li button i{flex:none;width:8px;height:1.5px;background:currentColor;transition:width .45s cubic-bezier(.2,.7,.2,1)}
-.index li.ch button i{width:12px}
+.index li button i{flex:none;width:20px;height:1.5px;display:flex;align-items:center}
+.index li button i::before{content:"";width:8px;height:1px;background:currentColor;opacity:.45;transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.index li.on button i::before{width:14px;opacity:.8}
+/* chapters carry their numeral where the others carry a dash */
+.index li.ch button i{height:auto;font:400 13px/1 var(--serif);font-style:normal;white-space:nowrap}
+.index li.ch button i::before{content:none}
 .index li.on button{color:var(--ink)}
-.index li.on button i{width:14px}
-.index .t{font:400 12px/1 var(--sans);opacity:0;transition:opacity .3s}
-.index li.ch .t{font:400 14px/1 var(--serif)}
-.index li.sub .t{padding-left:12px}
+.index .t{font:400 13px/1 var(--sans);opacity:0;transition:opacity .3s}
+.index li.ch .t{font:400 13px/1 var(--serif)}
 .index:hover .t,.index:focus-within .t{opacity:1;transition-delay:.12s}
+.index .turn{display:flex;margin-top:8px;padding:6px 0 0 4px;border-top:1px solid rgba(15,14,13,.08)}
+.index .turn button{width:20px;height:24px;display:grid;place-items:center;color:rgba(15,14,13,.55);transition:color .3s}
+.index .turn button:hover{color:var(--ink)}
+.index .turn button:disabled{opacity:.3;cursor:default;color:rgba(15,14,13,.55)}
 .index li.soon button{cursor:default;color:rgba(15,14,13,.3)}
 
 /* ---------- controls under the book ---------- */
-.bar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:40;
+.bar{display:none!important;position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:40;
   font:400 10px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:rgba(15,14,13,.62)}
 .bar button{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;transition:background .3s,color .3s}
 .bar button:hover{background:rgba(253,252,231,.6);color:var(--ink)}
@@ -180,35 +203,43 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @media (max-width:760px){ .index{left:8px} .bar .where{min-width:0} .bar .where span{display:none} .masthead{display:none} }
 </style>
 </head>
-<body>
-<p class="masthead">Harvey · Year in Review MMXXVI</p>
+<body class="closed preload">
 
 <nav class="index" id="index" aria-label="Contents">
   <h2><span>Contents</span></h2>
   <ol id="toc"></ol>
+  <div class="turn" role="group" aria-label="Pages">
+    <button id="prev" aria-label="Previous spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8.5 3 4.5 7l4 4"/></svg></button>
+    <button id="next" aria-label="Next spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="m5.5 3 4 4-4 4"/></svg></button>
+  </div>
 </nav>
 
+<!-- landing copy sits on the desk beside the closed book, and leaves once it opens -->
+<a class="lockup" id="home" href="#1" aria-label="Back to the cover"><img src="img/yir-lockup.svg" width="100" height="22" alt="Year in Review MMXXVI"></a>
+<aside class="landing" id="landing">
+  <p class="intro">A look back at the year when the future of legal AI became reality—and the people, progress, and possibilities that brought it to life.</p>
+  <nav class="ctas" aria-label="Exits"><a href="#">Get The Full Report</a><a href="#">Book A Demo</a><a href="#">Join Us</a></nav>
+</aside>
+<svg class="landing-mark" id="landingMark" viewBox="0 0 104 84" aria-label="Harvey"><path d="M68.55 66.85C66.76 66.85 64.84 66.11 62.81 64.65C60.78 63.18 57.93 60.82 54.26 57.56L49.17 53.05L48.89 52.8C42.37 47.26 35.86 44.49 29.34 44.49C22.82 44.49 16.49 47.35 10.61 53.05C9.97 53.67 9.33 54.31 8.7 55C9.92 53.7 11.5 53.05 13.46 53.05C15.83 53.05 18.45 53.98 21.34 55.85C24.22 57.73 27.99 60.61 32.63 64.53L35.53 66.85L36.3 67.47C39.97 70.48 43.34 72.74 46.44 74.24C49.53 75.75 52.46 76.51 55.24 76.51C60.72 76.51 66.13 73.28 71.48 66.86H68.55V66.85Z" fill="#FDFCE7"/><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z" fill="#231F20"/><path d="M99.07 48.36C97.28 48.36 95.36 47.62 93.33 46.16C91.3 44.69 88.45 42.33 84.78 39.07L79.69 34.56L79.41 34.31C72.89 28.77 66.38 26 59.86 26C53.34 26 47.01 28.86 41.13 34.56H43.98C46.35 34.56 48.97 35.49 51.86 37.36C54.74 39.24 58.51 42.12 63.15 46.04L66.05 48.36L66.82 48.98C70.49 51.99 73.86 54.25 76.96 55.75C80.05 57.26 82.98 58.02 85.76 58.02C91.24 58.02 96.65 54.79 102 48.37C102.61 47.64 103.22 46.87 103.83 46.05C102.53 47.59 100.94 48.37 99.07 48.37V48.36Z" fill="#FDFCE7"/><path d="M3.45 66.48C3.45 64.69 3.86 62.84 4.67 60.92C5.49 59.01 6.67 57.24 8.22 55.61C7.73 56.1 7.48 56.78 7.48 57.68C7.48 58.9 7.95 60.29 8.88 61.83C9.81 63.38 11.02 64.72 12.49 65.87C15.58 68.23 18.67 69.41 21.77 69.41C24.87 69.41 28.24 68.07 31.41 65.38C28.24 68.88 25.08 71.6 21.95 73.56C18.82 75.52 15.91 76.49 13.21 76.49C10.51 76.49 8.12 75.43 6.25 73.31C4.38 71.27 3.44 69 3.44 66.47L3.45 66.48Z" fill="#FDFCE7"/></svg>
+
 <main class="stage" id="stage">
+ <div class="obj" id="obj">
   <div class="board" aria-hidden="true"></div>
   <div class="stack l" aria-hidden="true"></div>
   <div class="stack r" aria-hidden="true"></div>
   <div class="book" id="book">
 
-    <!-- 1 · opening -->
-    <section class="spread" data-name="Opening" data-toc="Opening">
-      <div class="pg l">
-        <p class="abs intro it" style="left:48px;top:48px;width:250px;--d:0">A look back at the year when the future of legal AI became reality—and the people, progress, and possibilities that brought it to life.</p>
-        <nav class="abs ctas it" style="left:48px;top:136px;--d:120" aria-label="Exits"><a href="#">Get The Full Report</a><a href="#">Book A Demo</a><a href="#">Join Us</a></nav>
-        <p class="abs yir it" style="left:236px;top:378px;width:148px;--d:260">Year in Review<br>MMXXVI</p>
-        <svg class="abs it" style="left:48px;top:718px;width:34.5px;height:34.5px;--d:380" viewBox="674 354 92 92" aria-label="Harvey"><path fill="#0F0E0D" fill-rule="evenodd" d="M691.25 354H748.75L766 371.25V428.75L748.75 446H691.25L674 428.75V371.25L691.25 354Z M747.312 424.438H722.875L730.062 417.25V404.313H709.938V417.25L717.125 424.438H692.688L699.875 417.25V382.75L692.688 375.562H717.125L709.938 382.75V395.688H730.062V382.75L722.875 375.562H747.312L740.125 382.75V417.25L747.312 424.438Z"/></svg>
-      </div>
+    <!-- 1 · cover: the book lies closed; only the right half (the front board) shows -->
+    <section class="spread cover" data-name="Cover" >
+      <div class="pg l"></div>
       <div class="pg r">
         <div class="bleed it"><img src="img/hero.jpg" alt="Painting of a woman in period dress typing on a laptop at a draped table" fetchpriority="high" style="left:-450px;top:-300px;width:1495px;height:1419px"></div>
+        <p class="abs yir it" style="left:236px;top:64px;width:148px;color:var(--cream);--d:300">Year in Review<br>MMXXVI</p>
       </div>
     </section>
 
     <!-- 2 · a new standard -->
-    <section class="spread" data-name="A New Standard" data-toc="A New Standard">
+    <section class="spread" data-name="Preface" data-toc="Preface">
       <div class="pg l">
         <h1 class="abs headline it" style="left:64px;top:330px;width:440px;--d:0">A New Standard for Legal Work</h1>
         <span class="folio">2</span>
@@ -359,12 +390,11 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
     <div class="sweep" aria-hidden="true"><i id="sweep"></i></div>
     <div class="spine" aria-hidden="true"></div>
   </div>
+ </div>
 </main>
 
 <div class="bar" role="group" aria-label="Pages">
-  <button id="prev" aria-label="Previous spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8.5 3 4.5 7l4 4"/></svg></button>
   <p class="where" id="where" aria-live="polite"></p>
-  <button id="next" aria-label="Next spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="m5.5 3 4 4-4 4"/></svg></button>
   <button id="restart" aria-label="Back to the start"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3.2 5.2A4.3 4.3 0 1 1 2.8 8.4"/><path d="M2.6 2.6v2.8h2.8"/></svg></button>
 </div>
 
