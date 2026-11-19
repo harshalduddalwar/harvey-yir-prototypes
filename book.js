@@ -1,9 +1,10 @@
-/* Prototype E: a framed book read spread by spread. Turning crossfades the pages in reading order
-   (forward: right page first, then left) while a soft light passes across the paper; the page stacks
-   on the outer edges shift with progress. Each spread plays its data once it settles. */
+/* Prototype F: intro monogram and wordmark → a 3D book on the desk (drag to turn it, click to open) → an immersive
+   read where the desk takes the paper's colour. Pages turn as leaves: click a side for a quick turn,
+   or grab a page and pull it across. The contents bar adds a preview on hover and an overview of
+   every spread. Data on each spread plays once it settles, as in E. */
 (function(){
   const $=id=>document.getElementById(id);
-  const root=document.documentElement;
+  const root=document.documentElement, body=document.body;
   const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
   const seg=(p,a,b)=>clamp((p-a)/(b-a));
@@ -12,18 +13,20 @@
   const out=t=>1-Math.pow(1-t,3);
   const fmt=n=>Math.round(n).toLocaleString('en-US');
   const r2=v=>Math.round(v*100)/100;
+  const RAD=Math.PI/180;
 
   const spreads=[...document.querySelectorAll('.spread')], N=spreads.length;
-  let cur=-1;
+  let cur=-1, mode='closed';            // closed · moving · open
+  const later=(fn,ms)=>setTimeout(fn,reduce?0:ms);
 
-  /* ---------- fit the object to the window ---------- */
+  /* ---------- fit the spread to the window ---------- */
   function size(){
-    const W=innerWidth, H=innerHeight, mx=W>760?92:10;
-    const s=Math.min((W-2*mx)/1272,(H-112)/828);
-    root.style.setProperty('--s',Math.max(.2,s).toFixed(4));
+    const W=innerWidth, H=innerHeight, mx=W>760?128:12, my=W>760?44:12;
+    root.style.setProperty('--s',Math.max(.2,Math.min((W-2*mx)/1120,(H-2*my)/800)).toFixed(4));
+    if(ov.classList.contains('on')) fitTiles();
   }
 
-  /* ---------- tweens: one per running animation, cancelled when the spread is left ---------- */
+  /* ---------- tweens, cancelled when a spread is left ---------- */
   let tweens=[];
   function tween(dur,fn,delay=0){
     const tw={dead:false}; tweens.push(tw);
@@ -39,96 +42,328 @@
   }
   const killTweens=()=>{ tweens.forEach(t=>t.dead=true); tweens=[]; };
 
-  /* ---------- data on each spread ---------- */
-  // customers chart
-  const steps=[...document.querySelectorAll('#steps path')], marks=[...document.querySelectorAll('#marks rect')], cnt0=$('cnt0');
-  const chart=c=>{ steps.forEach((p,i)=>p.style.strokeDashoffset=r2(1-seg(c*7,i,i+1))); marks.forEach((m,i)=>m.style.opacity=r2(seg(c*7,i*2+.6,i*2+1))); cnt0.textContent=fmt(lerp(1000,3500,io(c)))+'+'; };
-
-  // leaders plate: 100 Am Law marks and a column of 10 for the Fortune 10; reach count
-  const plate=$('dotPlate'), dots=[], col=[];
-  const dot=(x,y,list)=>{ const d=document.createElement('i'); d.className='dot'; d.style.left=x+'px'; d.style.top=y+'px'; plate.appendChild(d); list.push(d); };
-  for(let r=0;r<10;r++) for(let c=0;c<10;c++) dot(16.54+c*25.03,16.54+r*25.03,dots);
-  const sep=document.createElement('i'); Object.assign(sep.style,{position:'absolute',left:'269.5px',top:'16.5px',width:'1.5px',height:'248px',background:'#FDFCE7'}); plate.appendChild(sep);
-  for(let r=0;r<10;r++) dot(275.7,16.54+r*25.03,col);
-  const cnt2=$('cnt2');
-  const leaders=t=>{ const L=Math.round(seg(t,0,.8)*80), LC=Math.round(seg(t,.8,1)*5); dots.forEach((el,i)=>el.classList.toggle('on',i<L)); col.forEach((el,i)=>el.classList.toggle('on',i<LC)); };
-  const reach=m=>{ cnt2.textContent=fmt(200000*out(m))+(m>0?'+':''); };
-
-  // figures
-  const figs=[...document.querySelectorAll('.fig b')];
-  const fig=(b,t)=>{ b.textContent=fmt(+b.dataset.to*out(t))+b.dataset.suf; };
-
-  // launches: positions carried over from C's 5600px track onto one 1112px axis
-  const LAUNCHES=[
-    {x:283,l:'Date',t:'Harvey II',p:'Spaces, Memory, and AI agents around the legal matter'},
-    {x:842,l:'Date',t:'Legal Agent Benchmark',p:'Open-sourced, with 1,200+ long-horizon legal tasks'},
-    {x:1104,l:'Date',t:'Harvey Tenet',p:"Harvey's first model trained for legal work"},
-    {x:1590,l:'Date',t:'Harvey Graph',p:'Connected legal and organizational context'},
-    {x:2108,l:'May',t:'Transformation Office',p:'Helping legal leaders rethink how work gets done'},
-    {x:2690,l:'Date',t:'User-level Memory',p:'Across web, mobile, Word, Outlook, and agents'},
-    {x:3170,l:'Date',t:'Agent Builder',p:'Text-based agent creation, pre-built agents, and routines'},
-    {x:3640,l:'Q3',t:'U.S. Case Law',p:'With major legal research source expansion'},
-    {x:4600,l:'Q4',t:'Space Memory',p:'Matter- and project-specific knowledge carried forward'}
-  ];
-  const MONTHS=['Jan','Feb','March','April','May','June','July','Aug','Sept','Oct','Nov','Dec'];
-  const AX=x=>64+(x-60)*1112/5600;
-  const tl=$('tl'), axisFill=$('axisFill'), feat=$('feat');
-  const moEls=MONTHS.map((m,i)=>{ const s=document.createElement('span'); s.className='mo'; s.textContent=m; s.style.left=AX(60+487*i)+'px'; tl.appendChild(s); return s; });
-  const mks=[], lts=[];
-  LAUNCHES.forEach((L,i)=>{
-    const x=AX(L.x);
-    const b=document.createElement('button'); b.className='mk'; b.style.left=x+'px'; b.style.pointerEvents='auto'; b.setAttribute('aria-label',L.t);
-    const t=document.createElement('button'); t.className='lt'; t.textContent=L.t; t.style.pointerEvents='auto'; t.tabIndex=-1;
-    t.style.top=(i%2?600:548)+'px';
-    // keep the label off the gutter
-    if(x>540&&x<660){ t.style.left=(x-104)+'px'; t.style.textAlign='right'; t.style.setProperty('--r','1'); t.classList.add('rt'); } else t.style.left=x+'px';
-    const pick=()=>{ stopCycle(); select(i); };
-    b.addEventListener('click',pick); t.addEventListener('click',pick); b.addEventListener('mouseenter',pick);
-    tl.appendChild(b); tl.appendChild(t); mks.push(b); lts.push(t);
-  });
-  document.head.insertAdjacentHTML('beforeend','<style>.lt.rt::before{left:auto;right:0}</style>');
-  let sel=-1, cycle=0;
-  function select(i,instant){
-    if(i===sel) return; sel=i;
-    const L=LAUNCHES[i], m=Math.min(11,Math.floor((L.x-60)/487));
-    mks.forEach((b,j)=>b.classList.toggle('on',j===i)); lts.forEach((b,j)=>b.classList.toggle('on',j===i));
-    moEls.forEach((s,j)=>s.classList.toggle('on',j===m));
-    const write=()=>{ $('featL').textContent=L.l; $('featT').textContent=L.t; $('featP').textContent=L.p; $('featN').textContent=String(i+1).padStart(2,'0')+' / '+String(LAUNCHES.length).padStart(2,'0'); };
-    if(instant||reduce){ write(); return; }
-    feat.classList.add('swapping'); clearTimeout(select.t);
-    select.t=setTimeout(()=>{ write(); feat.classList.remove('swapping'); },380);
-  }
-  function stopCycle(){ clearInterval(cycle); cycle=0; }
-
-  const PLAY={
-    chart:{ run(){ tween(1900,t=>chart(t),350); }, reset(){ chart(0); } },
-    reach:{ run(){ tween(1500,leaders,250); tween(1700,reach,500); }, reset(){ leaders(0); reach(0); } },
-    figs:{ run(){ figs.forEach((b,i)=>tween(1500,t=>fig(b,t),250+i*260)); }, reset(){ figs.forEach(b=>fig(b,0)); } },
-    launches:{
-      run(){
-        tween(1400,t=>axisFill.style.transform=`scaleX(${r2(io(t))})`,200);
-        mks.forEach((b,i)=>setTimeout(()=>{ if(cur===LI){ b.classList.add('show'); lts[i].classList.add('show'); } },reduce?0:300+i*120));
-        select(0,true);
-        if(!reduce) cycle=setInterval(()=>select((sel+1)%LAUNCHES.length),2800);
-      },
-      reset(){ stopCycle(); axisFill.style.transform='scaleX(0)'; mks.forEach(b=>b.classList.remove('show')); lts.forEach(b=>b.classList.remove('show')); sel=-1; select(0,true); }
-    }
-  };
-  const LI=spreads.findIndex(s=>s.dataset.play==='launches');
-  Object.values(PLAY).forEach(p=>p.reset());
-
-  // offices map follows the pointer
-  const mapbox=$('mapbox'), mapImg=$('mapImg');
-  mapbox.addEventListener('mousemove',e=>{
-    const r=mapbox.getBoundingClientRect(), px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
-    mapImg.style.transform=`translate3d(${r2(-px*2*60)}px,${r2(-py*2*36)}px,0)`;
-  });
-  mapbox.addEventListener('mouseleave',()=>{ mapImg.style.transform=''; });
-
-  /* ---------- contents ---------- */
-  const toc=$('toc'), tocItems=[];
+  /* ---------- snapshots: live pages for the turning leaf, finished spreads for previews ---------- */
+  const strip=el=>{ el.removeAttribute('id'); el.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id')); return el; };
+  const snapPage=p=>{ const c=strip(p.cloneNode(true)); c.classList.add('vis','in'); return c; };
+  const pages=s=>[s.querySelector('.pg.l'),s.querySelector('.pg.r')];
+  /* ---------- the Figma spreads come alive as a page settles ----------
+     Each spread is the Figma layout set as an image. FX (fx.js) maps where its text, rules and figures sit
+     and the flat paper beneath each one. A swatch of that paper holds the element back; a slice of the page
+     image, the element itself, then arrives on top: text rises in, rules draw across, figures count up and
+     hand over to the exact set type. */
+  const FXS=window.FX||{};
+  const NUMS=[];   // [spreadIndex, live counter, slice, target]
   spreads.forEach((s,i)=>{
-    if(!s.dataset.toc) return;   // the cover has no entry; tocItems stays indexed by spread
+    if(i===0) return;
+    const key=String(i).padStart(2,'0'), map=FXS[key]; if(!map) return;
+    pages(s).forEach(p=>{
+      const side=p.classList.contains('l')?'l':'r', src=`spreads/${key}-${side}.webp`;
+      (map[side]||[]).forEach((e,j)=>{
+        const [x,y,w,h]=e.b, d=Math.round(80+y*.3);   // a soft top-to-bottom sweep, all within a third of a second
+        const cover=document.createElement('i'); cover.className='fxc';
+        cover.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;background:${e.bg}`;
+        const sl=document.createElement('i'); sl.className='fxs';
+        sl.style.cssText=`left:${x}px;top:${y}px;width:${w}px;height:${h}px;background-image:url(${src});background-position:${-x}px ${-y}px`;
+        p.append(cover,sl);
+        if(false&&e.k==='n'){   // figures appear as printed: no counting up
+          sl.classList.add('fxn');
+          const c=document.createElement('span'); c.className='fxcnt it'; c.style.cssText=`left:${x}px;top:${y}px;height:${h}px;line-height:${h}px;color:${e.c};--d:${d/.55}`;
+          p.append(c);
+          const m=e.t.match(/^([^\d]*)([\d,]+)(.*)$/);
+          NUMS.push({i,c,sl,pre:m[1],to:+m[2].replace(/,/g,''),comma:m[2].includes(','),suf:m[3],d,txt:e.t,fit:0,ink:e.ink,right:!!e.r});
+        } else {
+          sl.classList.add('it'); if(e.k==='r') sl.classList.add(e.v?'fxv':'fxh');
+          sl.style.setProperty('--d',Math.round(d/.55));
+        }
+      });
+    });
+    s.dataset.play='fx';
+  });
+  const fmtN=(n,o)=>o.pre+(o.comma?Math.round(n).toLocaleString('en-US'):String(Math.round(n)))+o.suf;
+  // set the live figure so its ink lands exactly on the printed one: size by ink width, place by ink top-left
+  const mctx=document.createElement('canvas').getContext('2d');
+  function fitN(o){
+    if(o.fit) return;
+    const fam=getComputedStyle(o.c).fontFamily; mctx.font=`400 100px ${fam}`;
+    const m=mctx.measureText(o.txt), iw=m.actualBoundingBoxLeft+m.actualBoundingBoxRight; if(!iw) return;
+    const [x0,y0,x1]=o.ink, F=100*(x1-x0)/iw, k=F/100;
+    const fa=m.fontBoundingBoxAscent*k, fd=m.fontBoundingBoxDescent*k, base=y0+m.actualBoundingBoxAscent*k;
+    const left=x0+m.actualBoundingBoxLeft*k, adv=m.width*k;
+    Object.assign(o.c.style,{fontSize:r2(F)+'px',lineHeight:r2(fa+fd)+'px',height:r2(fa+fd)+'px',top:r2(base-fa)+'px',
+      left:r2(left)+'px',width:r2(adv)+'px',textAlign:o.right?'right':'left',letterSpacing:'0'});
+    o.fit=1;
+  }
+  const cntTo=(o,t)=>{ o.c.textContent=fmtN(o.to*t,o); };
+  const PLAY={ fx:{
+    run(i){ NUMS.forEach(o=>{ if(o.i!==i) return; fitN(o); o.sl.style.opacity=0; o.c.style.opacity=''; o.c.style.transitionDelay='';
+      tween(1300,t=>{ cntTo(o,out(t)); if(t>=1){ o.c.style.transitionDelay='0s'; o.sl.style.opacity=1; o.c.style.opacity=0; } },o.d+250); }); },
+    reset(i){ NUMS.forEach(o=>{ if(i!==undefined&&o.i!==i) return; fitN(o); o.sl.style.opacity=0; o.c.style.opacity=''; o.c.style.transitionDelay=''; cntTo(o,0); }); },
+    done(){ NUMS.forEach(o=>{ o.sl.style.opacity=1; o.c.style.opacity=0; cntTo(o,1); }); }
+  } };
+  document.fonts&&document.fonts.ready.then(()=>NUMS.forEach(o=>{ o.fit=0; }));
+
+  Object.values(PLAY).forEach(p=>p.done());
+  const tpl=spreads.map((s,i)=>{
+    if(i===0){ const c=document.createElement('div'); c.style.cssText='position:absolute;left:560px;top:0;width:560px;height:800px;overflow:hidden';   // the closed book lies on the right, where it opens from
+      c.appendChild(strip($('cv').cloneNode(true))); c.firstChild.style.cssText='position:absolute;inset:0'; return c; }
+    const c=strip(s.cloneNode(true)); c.classList.add('on'); c.querySelectorAll('.pg').forEach(p=>p.classList.add('vis','in')); return c;
+  });
+  Object.values(PLAY).forEach(p=>p.reset());
+  const thumb=(i,k)=>{ const w=document.createElement('div'); w.className='thumb'; w.style.transform=k?`scale(${k})`:''; w.appendChild(tpl[i].cloneNode(true)); return w; };
+
+  /* ---------- the 3D book on the desk ---------- */
+  const b3=$('b3'), hinge=$('hinge'), inL=$('inL'), blk=$('blk'), glare=$('glare'), gshadow=$('gshadow');
+  const gcontact=$('gcontact'), cvEl=$('cv');
+  // geometry, hardbound: 560×800 boards 9px thick, a 64px case, a page block set 8px in at the fore-edge
+  // and 7px at head and tail (the squares of a cased book), and a rounded spine bowed out 12px in three
+  // facets. Each face carries its outward normal for lighting.
+  const G={W:560,H:800,T:9,D:64}, SQ=8, SH=7, BOW=12;
+  function place(el,l,t,w,h,tf,n){ Object.assign(el.style,{left:l+'px',top:t+'px',width:w+'px',height:h+'px',transform:tf}); el.dataset.n=n.join(','); return el; }
+  function add(parent,cls,...geo){ const f=document.createElement('div'); f.className='f '+cls; parent.appendChild(f); return geo.length?place(f,...geo):f; }
+  function facet(el,p,q){   // a facet from point p to q in the x/z plane, full height
+    const dx=q[0]-p[0], dz=q[1]-p[1], L=Math.hypot(dx,dz), b=Math.atan2(-dz,dx);
+    return place(el,0,0,r2(L),G.H,`translate3d(${r2((p[0]+q[0])/2-L/2)}px,0,${r2((p[1]+q[1])/2)}px) rotateY(${b.toFixed(4)}rad)`,[Math.sin(b),0,Math.cos(b)].map(v=>+v.toFixed(4)));
+  }
+  const SP=[[0,-G.D],[-BOW,-G.D+14],[-BOW,-14],[0,0]];
+  facet(add(b3,'sb'),SP[0],SP[1]); facet($('spC'),SP[1],SP[2]); facet(add(b3,'sb'),SP[2],SP[3]);
+  const bodyZ=-(G.D/2), bodyD=G.D-2*G.T;   // page block between the boards
+  add(b3,'ed',G.W-SQ-bodyD/2,SH,bodyD,G.H-2*SH,`translateZ(${bodyZ}px) rotateY(90deg)`,[1,0,0]);
+  add(b3,'tp',3,SH-bodyD/2,G.W-SQ-3,bodyD,`translateZ(${bodyZ}px) rotateX(90deg)`,[0,-1,0]);
+  add(b3,'bt',3,G.H-SH-bodyD/2,G.W-SQ-3,bodyD,`translateZ(${bodyZ}px) rotateX(-90deg)`,[0,1,0]);
+  // board edges: the front board's travel with the hinge
+  [[hinge,-G.T/2],[b3,-G.D+G.T/2]].forEach(([parent,z])=>{
+    add(parent,'be',G.W-G.T/2,0,G.T,G.H,`translateZ(${z}px) rotateY(90deg)`,[1,0,0]);
+    add(parent,'be',0,-G.T/2,G.W,G.T,`translateZ(${z}px) rotateX(90deg)`,[0,-1,0]);
+    add(parent,'be',0,G.H-G.T/2,G.W,G.T,`translateZ(${z}px) rotateX(-90deg)`,[0,1,0]);
+  });
+  $('cv').dataset.n='0,0,1'; b3.querySelector('.bk').dataset.n='0,0,-1';
+  const lit=[...b3.querySelectorAll('[data-n]')].map(el=>({el,n:el.dataset.n.split(',').map(Number),hinged:hinge.contains(el)}));
+  const LIGHT=(v=>{ const m=Math.hypot(...v); return v.map(x=>x/m); })([-.38,-.52,.76]);
+  const BASE_Y=0, BASE_X=0;   // at rest the book faces you, square and flat
+  const FRONT='translate3d(0px,0px,0px) scale(1) rotateX(0deg) rotateY(0deg)';
+  const pose=(ry,rx,ty)=>`translate3d(-280px,${r2(ty)}px,0px) scale(.68) rotateX(${r2(rx)}deg) rotateY(${r2(ry)}deg)`;
+  let spin=0, spinV=0, tilt={x:0,y:0}, aim={x:0,y:0}, posing=false, t0=0, lastTouch=0, ry=BASE_Y, rx=BASE_X, ty=0;
+  let grab=null;
+  function shade(ry,rx){
+    const cy=Math.cos(ry*RAD), sy=Math.sin(ry*RAD), cx=Math.cos(rx*RAD), sx=Math.sin(rx*RAD);
+    for(const f of lit){
+      const [nx,ny,nz]=f.n, x1=nx*cy+nz*sy, z1=-nx*sy+nz*cy, y2=ny*cx-z1*sx, z2=ny*sx+z1*cx;
+      const dot=x1*LIGHT[0]+y2*LIGHT[1]+z2*LIGHT[2];
+      f.el.style.setProperty('--sh',r2(clamp(.7-dot*.78,0,.72)));
+      if(f.el.id==='cv') f.el.style.visibility=hingeA<90&&z2>.001?'inherit':'hidden';
+      else if(!(f.hinged&&hingeA>0)) f.el.style.visibility=z2>.001?'inherit':'hidden';
+    }
+    blk.style.visibility=cx*cy>.001?'inherit':'hidden';
+    glare.style.transform=`translate3d(${r2(-(((ry%360)+540)%360-180)*5)}px,0,0)`;
+  }
+  function frame(now){
+    if(!posing) return;
+    const t=(now-t0)/1000;
+    tilt.x+=(aim.x-tilt.x)*.05; tilt.y+=(aim.y-tilt.y)*.05;
+    if(!grab){
+      spin+=spinV; spinV*=.93;
+      if(Math.abs(spinV)<.05 && now-lastTouch>1200) spin+=(Math.round(spin/360)*360-spin)*.035;   // settle back to the front
+    }
+    ry=BASE_Y+spin+tilt.y; rx=0; ty=0;   // it only ever turns left or right: no tilt, no float, never the top or bottom
+    b3.style.transform=pose(ry,rx,ty); shade(ry,rx);
+    gshadow.style.transform=`scale(${r2(1-ty/120)},1)`; gshadow.style.opacity=r2(.85-ty/40);
+    gcontact.style.transform=`scale(${r2(1-ty/50)},1)`; gcontact.style.opacity=r2(.75-ty/14);
+    requestAnimationFrame(frame);
+  }
+  function startPose(){ if(posing) return; posing=true; t0=performance.now(); tilt={x:0,y:0}; requestAnimationFrame(frame); }
+  addEventListener('mousemove',e=>{ if(mode!=='closed'||grab) return; aim.y=(e.clientX/innerWidth-.5)*40; aim.x=0; });
+  document.addEventListener('mouseleave',()=>{ aim.y=0; });
+
+  b3.addEventListener('pointerdown',e=>{
+    if(mode!=='closed'||e.button>0) return;
+    grab={x0:e.clientX,y0:e.clientY,lx:e.clientX,moved:false,id:e.pointerId}; b3.setPointerCapture(e.pointerId); b3.classList.add('grabbing');
+  });
+  b3.addEventListener('pointermove',e=>{
+    if(!grab) return;
+    const d=e.clientX-grab.lx; grab.lx=e.clientX;
+    if(Math.abs(e.clientX-grab.x0)>5||Math.abs(e.clientY-grab.y0)>5) grab.moved=true;
+    spin+=d*.5; spinV=d*.5; lastTouch=performance.now();
+  });
+  const drop=e=>{ if(!grab) return; const g=grab; grab=null; b3.classList.remove('grabbing'); lastTouch=performance.now(); if(!g.moved&&e.type==='pointerup') go(1); };
+  b3.addEventListener('pointerup',drop); b3.addEventListener('pointercancel',drop);
+  b3.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go(1); } });
+
+  // the board swings on a tween so each of its faces can be shown only while it faces you
+  let hingeA=0, hingeRaf=0;
+  function setHinge(a){ hingeA=a; hinge.style.transform=`rotateY(${r2(-a)}deg)`; if(a>0) lit.forEach(f=>{ if(f.hinged&&f.el.id!=='cv') f.el.style.visibility='inherit'; }); cvEl.style.visibility=a<90?'inherit':'hidden'; inL.style.visibility=a<90?'hidden':'inherit'; }
+  function hingeTo(a1,dur){
+    cancelAnimationFrame(hingeRaf); const a0=hingeA, s0=performance.now();
+    if(reduce||!dur){ setHinge(a1); return; }
+    (function st(now){ const k=clamp((now-s0)/dur); setHinge(lerp(a0,a1,io(k))); if(k<1) hingeRaf=requestAnimationFrame(st); })(performance.now());
+  }
+  function setInside(i){ const [l,r]=pages(spreads[i]); inL.replaceChildren(snapPage(l)); blk.replaceChildren(snapPage(r)); }
+  const normY=a=>((a%360)+540)%360-180;
+
+  /* open: the book turns to face you, the board swings over, and the desk becomes the page */
+  /* ---------- sound: paper, made in the browser ----------
+     A page turn is a swish of filtered noise rising as the leaf lifts and crosses, then a soft settle as it
+     lands; the hardcover gives a lower, weightier version. Each one varies slightly, as real paper does. */
+  let actx=null, nbuf=null;
+  function audio(){
+    if(actx) return actx;
+    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null;
+    actx=new AC(); const n=actx.sampleRate*2; nbuf=actx.createBuffer(1,n,actx.sampleRate);
+    const d=nbuf.getChannelData(0); let b=0; for(let i=0;i<n;i++){ const w=Math.random()*2-1; b=.97*b+.03*w; d[i]=w*.55+b*3.2; }   // a little pink: paper, not hiss
+    return actx;
+  }
+  ['pointerdown','keydown','touchstart'].forEach(ev=>addEventListener(ev,()=>{ const a=audio(); if(a&&a.state==='suspended') a.resume(); },{capture:true,passive:true}));
+  function burst(t,dur,{f0,f1,q=.8,gain=.25,attack=.04,type='bandpass'}){
+    const a=actx, src=a.createBufferSource(); src.buffer=nbuf; src.playbackRate.value=.9+Math.random()*.2;
+    const f=a.createBiquadFilter(); f.type=type; f.Q.value=q; f.frequency.setValueAtTime(f0,t); f.frequency.exponentialRampToValueAtTime(f1,t+dur);
+    const g=a.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(gain,t+attack); g.gain.exponentialRampToValueAtTime(.0008,t+dur);
+    src.connect(f).connect(g).connect(a.destination); src.start(t,Math.random()*1.2); src.stop(t+dur+.05);
+  }
+  function flipSound(dur=.62){
+    if(reduce) return; const a=audio(); if(!a||a.state!=='running') return;
+    const t=a.currentTime, v=.85+Math.random()*.3;
+    burst(t,dur*.75,{f0:900*v,f1:3800*v,q:.7,gain:.16,attack:dur*.25});            // the leaf lifting and sweeping across
+    burst(t+dur*.18,dur*.55,{f0:5200*v,f1:2600*v,q:1.2,gain:.05,attack:.05});      // the fine rustle of its edge
+    burst(t+dur*.86,.16,{f0:1400,f1:500,q:.6,gain:.12,attack:.008,type:'lowpass'}); // landing on the page beneath
+  }
+  function boardSound(){
+    if(reduce) return; const a=audio(); if(!a||a.state!=='running') return;
+    const t=a.currentTime;
+    burst(t,.5,{f0:600,f1:1800,q:.6,gain:.1,attack:.15});
+    burst(t+.62,.22,{f0:420,f1:140,q:.7,gain:.32,attack:.006,type:'lowpass'});      // the board settling: heavier, lower
+  }
+
+  function openTo(i){
+    boardSound();
+    mode='moving'; posing=false; body.classList.remove('closed');
+    setInside(i);
+    b3.style.transition='none'; b3.style.transform=pose(normY(ry),rx,ty); void b3.offsetWidth;
+    b3.style.transition=`transform ${reduce?0:.8}s cubic-bezier(.55,.05,.25,1)`; b3.style.transform=FRONT;
+    gshadow.style.opacity=0; gcontact.style.opacity=0; shade(0,0);
+    later(()=>{ hingeTo(180,900); setBg(i); },520);
+    later(()=>{
+      spreads.forEach(s=>{ s.classList.remove('on'); settle(s,false); });
+      const B=spreads[i]; B.classList.add('on'); settle(B,true);
+      body.classList.add('open'); body.classList.remove('show3d');
+      cur=i; chrome(); arrive(i,120); mode='open';
+    },reduce?0:1400);
+    cur=i; chrome();
+  }
+
+  /* close: the reverse, from whatever spread is open */
+  function closeBook(){
+    boardSound();
+    if(T) endTurn(true);
+    const from=cur; mode='moving';
+    setInside(from);
+    b3.style.transition='none'; b3.style.transform=FRONT; setHinge(180); shade(0,0);
+    void b3.offsetWidth;
+    body.classList.add('show3d'); body.classList.remove('open');
+    leave(from); spreads[from].classList.remove('on'); settle(spreads[from],false);
+    cur=0; chrome(); setBg(0);
+    requestAnimationFrame(()=>hingeTo(0,800));
+    later(()=>{ spin=0; spinV=0; b3.style.transition=`transform ${reduce?0:.95}s cubic-bezier(.45,.05,.3,1)`; b3.style.transform=pose(BASE_Y,BASE_X,0); gshadow.style.opacity=.85; gcontact.style.opacity=.75; },reduce?0:620);
+    later(()=>{ body.classList.add('closed'); },900);
+    later(()=>{ b3.style.transition='none'; mode='closed'; startPose(); },reduce?0:1600);
+  }
+
+  /* ---------- the flat book: turning leaves ---------- */
+  const book=$('book'), turns=$('turns'), castL=$('castL'), castR=$('castR');
+  function settle(s,on){ pages(s).forEach(p=>{ p.classList.toggle('vis',on); p.classList.toggle('in',on); if(!on) p.classList.remove('done'); }); }
+  function leave(i){ if(i<1) return; killTweens(); const p=PLAY[spreads[i].dataset.play]; if(p) p.reset(i); }
+  function arrive(i,delay){ const p=PLAY[spreads[i].dataset.play]; if(p) later(()=>{ if(cur===i&&!T&&mode==='open') p.run(i); },delay); }
+  const setBg=i=>root.style.setProperty('--bg',i===0?'var(--desk)':'#BEC4AE');
+
+  /* ---------- the turning page: thin paper, not board ----------
+     The leaf is a chain of narrow strips hinged edge to edge, so it bends as it turns: lying flat at the
+     start and end, bowing most mid-turn with its free edge leading, as a lifted page does. Each strip is lit
+     by its own angle (shade blends smoothly strip to strip), and the leaf casts a moving shadow on the page
+     beneath it, dark where it hangs over and falling off past its edge, with a crease at the spine. */
+  let T=null;
+  const NS=12, SW=G.W/NS, CURL=44;   // fewer strips, a gentler bow: light enough to feel like paper without weighing on the frame   // strips, strip width, how far a page bows mid-turn (degrees across its width)
+  const WT=Array.from({length:NS},(_,i)=>i+.6), WS=WT.reduce((a,b)=>a+b,0);   // more of the bend toward the free edge
+  const keyOf=i=>String(i).padStart(2,'0');
+  function startTurn(to){
+    flipSound();
+    const from=cur, A=spreads[from], B=spreads[to], dir=to>from?1:-1;
+    B.classList.add('on'); settle(B,true); B.style.zIndex=1; pages(B)[dir>0?0:1].classList.add('done');
+    A.style.zIndex=2; A.classList.add(dir>0?'keepL':'keepR');
+    const leaf=document.createElement('div'); leaf.className='leaf2 '+(dir>0?'fw':'bw');
+    const front=`spreads/${keyOf(from)}-${dir>0?'r':'l'}.webp`, back=`spreads/${keyOf(to)}-${dir>0?'l':'r'}.webp`;
+    let parent=leaf; const strips=[];
+    for(let i=0;i<NS;i++){
+      const st=document.createElement('div'); st.className='strip';
+      st.style.cssText=`width:${r2(SW)}px;left:${i?(dir>0?r2(SW):r2(-SW)):(dir>0?0:r2(-SW))}px;transform-origin:${dir>0?'0':'100%'} 50%`;
+      const mk=(src,isBack)=>{
+        const f=document.createElement('div'); f.className='sface'+(isBack?' back':'');
+        const innerLeft=(dir>0)!==isBack, bx=innerLeft?-(i*SW):-(G.W-(i+1)*SW);
+        f.style.backgroundImage=`url(${src})`; f.style.backgroundPosition=`${r2(bx+1)}px 0`;
+        const sh=document.createElement('i'); f.appendChild(sh); st.appendChild(f); return {f,sh,innerLeft};
+      };
+      const F=mk(front,false), Bk=mk(back,true);
+      parent.appendChild(st); strips.push({st,F,Bk}); parent=st;
+    }
+    turns.appendChild(leaf);
+    T={from,to,A,B,dir,leaf,strips,a:0,raf:0};
+    cur=to; chrome(); setBg(to); hideHint();
+    return T;
+  }
+  function setAngle(a){
+    T.a=a; const d=T.dir, k=Math.sin(a*RAD), c=k*CURL;
+    // the spine edge lags, the free edge leads; the two ends always total the turn so the page lands flat
+    const base=a-c/2; T.leaf.style.transform=`rotateY(${r2(-d*base)}deg)`;
+    let phi=base, x=0; const sh=[];
+    const shadeAt=p=>{ const cs=Math.cos(p*RAD); return {f:clamp((1-cs)*.3), b:clamp((1+cs)*.3)}; };
+    sh.push(shadeAt(phi));
+    T.strips.forEach((s,i)=>{
+      const dlt=c*WT[i]/WS; if(i) s.st.style.transform=`rotateY(${r2(-d*dlt)}deg)`; else s.st.style.transform='none';
+      if(i) phi+=dlt; x+=SW*Math.cos(phi*RAD); sh.push(shadeAt(phi+(i+1<NS?c*WT[i+1]/WS:0)));
+    });
+    T.strips.forEach((s,i)=>{
+      const a0=sh[i], a1=sh[i+1], crease=i===0?.1*k:0;
+      s.F.sh.style.opacity=r2((a0.f+a1.f)/2+crease); s.Bk.sh.style.opacity=r2((a0.b+a1.b)/2+crease);
+    });
+    // shadow on the page beneath: under the leaf while it is over that page, fading out past its edge
+    const X=x, near=T.dir>0?castR:castL, far=T.dir>0?castL:castR, side=d>0?90:270;
+    if(X>0){ const e=r2(X); near.style.background=`linear-gradient(${side}deg,rgba(15,14,13,${r2(.32*k)}) 0,rgba(15,14,13,${r2(.16*k)}) ${r2(Math.max(0,X-40))}px,rgba(15,14,13,${r2(.24*k)}) ${e}px,rgba(15,14,13,0) ${r2(X+90*k+10)}px)`; near.style.opacity=1; far.style.opacity=0; }
+    else { const e=r2(-X); far.style.background=`linear-gradient(${side+180}deg,rgba(15,14,13,${r2(.3*k)}) 0,rgba(15,14,13,${r2(.14*k)}) ${r2(Math.max(0,-X-40))}px,rgba(15,14,13,${r2(.2*k)}) ${e}px,rgba(15,14,13,0) ${r2(-X+80*k+10)}px)`; far.style.opacity=1; near.style.opacity=0; }
+  }
+  function runTurn(complete,ease){
+    const tt=T, a0=tt.a, a1=complete?180:0, dur=reduce?0:Math.max(200,600*Math.abs(a1-a0)/180), s0=performance.now(), e=ease||out;
+    cancelAnimationFrame(tt.raf);
+    (function step(now){
+      if(T!==tt) return;
+      const k=dur?clamp((now-s0)/dur):1; setAngle(lerp(a0,a1,e(k)));
+      if(k<1) tt.raf=requestAnimationFrame(step); else endTurn(complete);
+    })(performance.now());
+  }
+  function endTurn(complete){
+    const t=T; if(!t) return; T=null; cancelAnimationFrame(t.raf);
+    t.leaf.remove(); castL.style.opacity=castR.style.opacity=0;
+    if(complete){
+      t.A.classList.remove('on','keepL','keepR'); t.A.style.zIndex=''; settle(t.A,false); t.B.style.zIndex='';
+      leave(t.from); arrive(t.to,60);
+    } else {
+      t.B.classList.remove('on'); t.B.style.zIndex=''; settle(t.B,false);
+      t.A.classList.remove('keepL','keepR'); t.A.style.zIndex='';
+      cur=t.from; chrome(); setBg(t.from);
+    }
+  }
+
+  /* ---------- going anywhere ---------- */
+  function go(to){
+    to=clamp(to,0,N-1);
+    if(to===cur||mode==='moving'||D&&D.started) return;
+    if(to===0){ closeBook(); return; }
+    if(cur===0){ openTo(to); return; }
+    if(T) endTurn(true);
+    startTurn(to); runTurn(true,io);
+  }
+  const next=()=>go(cur+1), prev=()=>go(cur-1);
+
+  /* ---------- contents bar, preview and overview ---------- */
+  const toc=$('toc'), tocItems=[], btnPrev=$('prev'), btnNext=$('next'), preview=$('preview'), index=$('index');
+  spreads.forEach((s,i)=>{
+    if(!s.dataset.toc) return;
     const [a,b]=s.dataset.toc.split('|'), li=document.createElement('li'), btn=document.createElement('button');
     let text=a, cls='', num='';
     if(b!==undefined){ if(a==='sub'){ text=b; cls='sub'; } else { text=b; num=a; cls='ch'; } }
@@ -136,92 +371,142 @@
     li.className=cls; btn.innerHTML='<i></i><span class="t"></span>';
     btn.querySelector('i').textContent=num; btn.querySelector('.t').textContent=text;
     btn.addEventListener('click',()=>go(i));
+    btn.addEventListener('mouseenter',()=>{
+      preview.replaceChildren(thumb(i,.2));
+      const r=btn.getBoundingClientRect();
+      preview.style.top=r2(clamp(r.top+r.height/2-80,16,innerHeight-176))+'px';
+      preview.style.left=r2(index.getBoundingClientRect().left+262+14)+'px';
+      preview.classList.add('on');
+    });
     li.appendChild(btn); toc.appendChild(li); tocItems[i]=li;
   });
+  index.addEventListener('mouseleave',()=>preview.classList.remove('on'));
 
-  /* ---------- turning ---------- */
-  const sweep=$('sweep'), where=$('where'), btnPrev=$('prev'), btnNext=$('next');
-  let timers=[];
-  const pages=s=>[s.querySelector('.pg.l'),s.querySelector('.pg.r')];
-  function settle(s,on){ pages(s).forEach(p=>{ p.classList.toggle('vis',on); p.classList.toggle('in',on); }); }
-  function finish(){
-    timers.forEach(clearTimeout); timers=[];
-    spreads.forEach((s,i)=>{ if(i!==cur){ s.classList.remove('on','out'); s.style.zIndex=''; settle(s,false); } });
-    if(cur>=0){ const s=spreads[cur]; s.classList.remove('out'); settle(s,true); }
-  }
-  function leave(i){
-    if(i<0) return; killTweens();
-    const p=PLAY[spreads[i].dataset.play]; if(p) timers.push(setTimeout(()=>p.reset(),reduce?0:520));
-  }
-  function arrive(i,delay){
-    const p=PLAY[spreads[i].dataset.play]; if(!p) return;
-    if(delay) timers.push(setTimeout(()=>{ if(cur===i) p.run(); },delay)); else p.run();
-  }
+  const ov=$('ov'), grid=$('ovGrid'), tiles=[];
+  spreads.forEach((s,i)=>{
+    const t=document.createElement('button'); t.className='tile'; t.style.setProperty('--i',i);
+    const [a,b]=(s.dataset.toc||s.dataset.cap||'Cover').split('|');
+    const ch=b!==undefined&&a!=='sub';
+    t.innerHTML=`<div class="tv"></div><div class="tcap${ch?' ch':''}"><i>${ch?a:(i===0?'':'—')}</i><span></span></div>`;
+    t.querySelector('span').textContent=i===0?'':(b===undefined?a:b);
+    t.querySelector('.tv').appendChild(thumb(i));
+    t.addEventListener('click',()=>{ closeOverview(); later(()=>go(i),260); });
+    grid.appendChild(t); tiles.push(t);
+  });
+  function fitTiles(){ const w=tiles[0].querySelector('.tv').clientWidth; grid.style.setProperty('--k',(w/1120).toFixed(4)); }
+  function openOverview(){ tiles.forEach((t,i)=>t.classList.toggle('on',i===cur)); ov.classList.add('on'); ov.setAttribute('aria-hidden','false'); fitTiles(); preview.classList.remove('on'); }
+  function closeOverview(){ ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); }
+  $('ovBtn').addEventListener('click',openOverview); $('ovClose').addEventListener('click',closeOverview);
+
+  const hint=$('hint'); let turned=false;
+  function hideHint(){ turned=true; hint.classList.add('gone'); }
   function chrome(){
-    const p=cur/(N-1);
-    root.style.setProperty('--stl',r2(3+10*p)+'px'); root.style.setProperty('--str',r2(3+10*(1-p))+'px');
-    where.innerHTML=`<b>${String(cur+1).padStart(2,'0')}</b> / ${String(N).padStart(2,'0')}<span> · ${spreads[cur].dataset.name}</span>`;
-    btnPrev.disabled=cur===0; btnNext.disabled=cur===N-1;
-    tocItems.forEach((li,i)=>li.classList.toggle('on',i===cur));
-    document.body.classList.toggle('closed',cur===0);
+    btnPrev.disabled=cur<=0; btnNext.disabled=cur>=N-1;
+    let at=-1; tocItems.forEach((li,i)=>{ if(i<=cur) at=i; }); tocItems.forEach((li,i)=>li.classList.toggle('on',i===at));   // the section you are in
+    if(cur===0){ hint.textContent='Drag or scroll to turn the book · Click to open'; hint.classList.remove('gone'); }
+    else { hint.textContent=''; hint.classList.add('gone'); }   // no hint once the book is open
     history.replaceState(null,'','#'+(cur+1));
   }
-  function go(to,instant){
-    to=clamp(to,0,N-1); if(to===cur) return;
-    finish();
-    const from=cur, dir=to>from?1:-1, A=spreads[from], B=spreads[to];
-    cur=to; leave(from); chrome();
-    if(instant||from<0||reduce){
-      if(A){ A.classList.remove('on','out'); settle(A,false); }
-      B.classList.add('on'); settle(B,true); arrive(to,reduce?0:500); return;
-    }
-    A.style.zIndex=1; B.style.zIndex=2;
-    A.classList.add('out'); B.classList.add('on');
-    const [bl,br]=pages(B), first=dir>0?br:bl, second=dir>0?bl:br;
-    // the light crosses the paper in reading direction
-    sweep.animate([{transform:`translate3d(${dir>0?1240:-340}px,0,0)`,opacity:0},{opacity:1,offset:.2},{opacity:1,offset:.75},{transform:`translate3d(${dir>0?-340:1240}px,0,0)`,opacity:0}],{duration:1150,easing:'cubic-bezier(.45,.05,.35,1)'});
-    timers.push(setTimeout(()=>{ first.classList.add('vis','in'); },240));
-    timers.push(setTimeout(()=>{ second.classList.add('vis','in'); },600));
-    timers.push(setTimeout(()=>{ A.classList.remove('on','out'); A.style.zIndex=''; settle(A,false); B.style.zIndex=''; },1300));
-    arrive(to,900);
-  }
-  const next=()=>go(cur+1), prev=()=>go(cur-1);
-  function restart(){ go(0); }
 
   /* ---------- input ---------- */
   btnPrev.addEventListener('click',prev); btnNext.addEventListener('click',next);
-  $('restart').addEventListener('click',restart); $('restartIn').addEventListener('click',e=>{ e.stopPropagation(); restart(); });
-  $('home').addEventListener('click',e=>{ e.preventDefault(); restart(); });
-  document.querySelectorAll('.ctas a').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); }));
-  // click the right page to go on, the left page to go back
-  $('book').addEventListener('click',e=>{
-    if(e.target.closest('a,button,.mapbox')) return;
-    const r=$('book').getBoundingClientRect();
-    (e.clientX-r.left)>r.width/2?next():prev();
+  $('restartIn')?.addEventListener('click',e=>{ e.stopPropagation(); go(0); });
+  $('home').addEventListener('click',e=>{ e.preventDefault(); closeOverview(); go(0); });
+  document.querySelectorAll('.ctas a').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+
+  // grab a page and pull it across; a click without a pull turns it
+  let D=null;
+  book.addEventListener('pointerdown',e=>{
+    if(mode!=='open'||e.button>0||e.target.closest('a,button,.mapbox')) return;
+    if(T) endTurn(true);
+    const r=book.getBoundingClientRect();
+    D={x0:e.clientX,y0:e.clientY,side:(e.clientX-r.left)>r.width/2?1:-1,w:r.width,lx:e.clientX,lt:performance.now(),v:0,id:e.pointerId,started:false};
   });
+  addEventListener('pointermove',e=>{
+    if(!D) return;
+    const dx=e.clientX-D.x0;
+    if(!D.started){
+      if(Math.abs(dx)<8) return;
+      const dir=dx<0?1:-1, to=cur+dir;
+      if(dir!==D.side||to<1||to>N-1){ D=null; return; }
+      startTurn(to); D.started=true; try{ book.setPointerCapture(D.id); }catch(_){}
+    }
+    const now=performance.now(); D.v=(e.clientX-D.lx)/Math.max(1,now-D.lt); D.lx=e.clientX; D.lt=now;
+    setAngle(clamp(Math.abs(dx)/(D.w*.7)*180,0,180));
+  });
+  const release=e=>{
+    if(!D) return; const d=D; D=null;
+    if(!d.started){ if(e.type==='pointerup'&&Math.abs(e.clientX-d.x0)<8&&Math.abs(e.clientY-d.y0)<8) d.side>0?next():prev(); return; }
+    const fling=-d.v*T.dir;
+    runTurn(fling>.35||(T.a>80&&fling>-.35));
+  };
+  addEventListener('pointerup',release); addEventListener('pointercancel',release);
+
   addEventListener('keydown',e=>{
     if(e.metaKey||e.ctrlKey||e.altKey) return;
+    if(body.classList.contains('intro-on')){ endIntro(); return; }
     const k=e.key;
+    if(k==='Escape'){ closeOverview(); return; }
+    if(k==='o'||k==='O'){ ov.classList.contains('on')?closeOverview():openOverview(); return; }
+    if(ov.classList.contains('on')) return;
     if(['ArrowRight','ArrowDown','PageDown',' '].includes(k)){ e.preventDefault(); next(); }
     else if(['ArrowLeft','ArrowUp','PageUp'].includes(k)){ e.preventDefault(); prev(); }
     else if(k==='Home'){ e.preventDefault(); go(0); } else if(k==='End'){ e.preventDefault(); go(N-1); }
   });
-  let tx=0,ty=0;
-  addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
-  addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
-    if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)) dx<0?next():prev(); },{passive:true});
   let wheelLock=0, acc=0;
   addEventListener('wheel',e=>{
+    if(ov.classList.contains('on')) return;
     e.preventDefault(); const now=performance.now();
-    if(now<wheelLock){ wheelLock=now+260; return; }       // still the same gesture (trackpad momentum)
+    if(mode==='closed'){ const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY; spin+=d*(e.deltaMode===1?6:.35); spinV=0; lastTouch=now; return; }
+    if(now<wheelLock){ wheelLock=now+240; return; }
     acc+=Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX;
-    if(Math.abs(acc)>30){ acc>0?next():prev(); acc=0; wheelLock=now+800; }
+    if(Math.abs(acc)>30){ acc>0?next():prev(); acc=0; wheelLock=now+700; }
   },{passive:false});
+
+  // the label that rides with the pointer
+  const cursor=$('cursor'), cursorT=$('cursorT');
+  addEventListener('pointermove',e=>{
+    cursor.style.transform=`translate3d(${e.clientX}px,${e.clientY}px,0)`;
+    let txt='';
+    if(e.target.closest&&!e.target.closest('a,button,.mapbox,.index,.ov,.landing')){
+      if(mode==='closed'&&e.target.closest('#b3')) txt=grab&&grab.moved?'':'Open';
+      else if(mode==='open'&&!D&&e.target.closest('#book')){
+        const r=book.getBoundingClientRect(), right=(e.clientX-r.left)>r.width/2;
+        txt=right?(cur<N-1?'Next':''):(cur===1?'Close':'Back');
+      }
+    }
+    if(txt) cursorT.textContent=txt;
+    cursor.classList.toggle('on',!!txt);
+  });
+  document.addEventListener('pointerleave',()=>cursor.classList.remove('on'));
+
+  /* ---------- intro: the wordmark writes on beneath the monogram and the flourishes unfurl; then the
+     title page recedes as one piece, the book rises, and the corner marks surface in place ---------- */
+  const ist=$('ist'), w1=$('w1'), w2=$('w2'), monoC=$('monoC'); let introTimers=[];
+  [w1,w2].forEach((w,k)=>{ const ln=w.querySelector('.ln'); let n=0; ln.innerHTML=[...ln.textContent].map(c=>c===' '?' ':`<i style="--i:${n++ + k*4}">${c}</i>`).join(''); });
+  function runIntro(){
+    if(!body.classList.contains('intro-on')) return;   // skipped before the type loaded
+    const at=(fn,ms)=>introTimers.push(setTimeout(fn,ms));
+    at(()=>body.classList.add('intro-a'),60);
+    at(()=>body.classList.add('intro-f'),900);
+    at(()=>body.classList.add('intro-x'),2600);   // the title page recedes in place
+    at(()=>body.classList.add('intro-b'),3100);   // the book rises into the space
+    at(()=>body.classList.add('intro-c'),3700);   // the corner marks, the lede, the contents bar surface
+    at(endIntro,5600);
+  }
+  function endIntro(){
+    introTimers.forEach(clearTimeout); introTimers=[];
+    body.classList.remove('intro-on','intro-a','intro-f','intro-x','intro-b','intro-c');
+  }
+  ['pointerdown','wheel'].forEach(ev=>addEventListener(ev,()=>{ if(body.classList.contains('intro-on')) endIntro(); },{capture:true}));
 
   /* ---------- start ---------- */
   addEventListener('resize',size); size();
-  const h=parseInt(location.hash.slice(1),10);
-  go(h>=1&&h<=N?h-1:0,true);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>document.body.classList.remove('preload')));
+  cur=0; mode='closed'; body.classList.add('show3d'); setBg(0); chrome(); startPose();
+  if(!reduce){
+    body.classList.add('intro-on');   // hold the stage empty until the type has loaded
+    Promise.race([document.fonts.ready,new Promise(res=>setTimeout(res,1500))]).then(runIntro);
+  }
+  setTimeout(()=>body.classList.remove('preload'),60);
   addEventListener('hashchange',()=>{ const n=parseInt(location.hash.slice(1),10); if(n>=1&&n<=N&&n-1!==cur) go(n-1); });
 })();
