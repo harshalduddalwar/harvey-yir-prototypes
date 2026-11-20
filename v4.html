@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>/* remember the version you are on, so a refresh reopens it */(function(){try{localStorage.setItem("yir-version","v4");document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".vt a[href]");if(!a)return;var h=a.getAttribute("href");try{localStorage.setItem("yir-version",h.indexOf("scroll")>-1?"v2":h.indexOf("v3")>-1?"v3":h.indexOf("v4")>-1?"v4":"v1")}catch(_){}},true);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Harvey Year in Review V4</title>
+<meta name="description" content="Prototype V4 of the Harvey 2026 Year in Review: the screen is the book. Closed on the right on arrival; scrolling opens the cover across the screen and turns the pages.">
+<link rel="preload" href="fonts/harvey-serif.otf" as="font" type="font/otf" crossorigin>
+<style>
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Harvey Sans';src:url(fonts/harvey-sans.woff2) format('woff2-variations'),url(fonts/harvey-sans.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@property --r{syntax:'<percentage>';inherits:false;initial-value:-25%}
+/* V4: the screen is the book. On arrival it lies closed on the right half, its cover full bleed, the left half
+   bare sage with the monogram; scrolling swings the cover across and the whole screen becomes the open spread,
+   then each scroll turns a page. */
+:root{
+  --cream:#FDFCE7; --ink:#0F0E0D; --pill:#E3E2CF; --sage:#CFD4C0;
+  --serif:'Harvey Serif','Iowan Old Style',Georgia,serif; --sans:'Harvey Sans','Helvetica Neue',Arial,sans-serif;
+  --paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='g' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .27  0 0 0 0 .22  0 0 0 -1.8 1.15'/%3E%3C/filter%3E%3Cfilter id='s' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25  0 0 0 0 .22  0 0 0 0 .18  0 0 0 -6 3.3'/%3E%3C/filter%3E%3Cfilter id='m' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0078125 .0117' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4  0 0 0 0 .36  0 0 0 0 .3  0 0 0 -1.2 .7'/%3E%3C/filter%3E%3Cfilter id='f' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.12 .5' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .27  0 0 0 0 .22  0 0 0 -3.6 1.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='.1'/%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='.24'/%3E%3Crect width='100%25' height='100%25' filter='url(%23s)' opacity='.07'/%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.05'/%3E%3C/svg%3E"); --tooth:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='r' x='0' y='0' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' seed='3' stitchTiles='stitch' result='t'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045 .09' numOctaves='3' seed='8' stitchTiles='stitch' result='b'/%3E%3CfeComposite in='t' in2='b' operator='arithmetic' k2='.8' k3='.35' result='h'/%3E%3CfeDiffuseLighting in='h' lighting-color='#fff' surfaceScale='3.4' diffuseConstant='1'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.7' intercept='-.89'/%3E%3CfeFuncG type='linear' slope='1.7' intercept='-.89'/%3E%3CfeFuncB type='linear' slope='1.7' intercept='-.89'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(#r)'/%3E%3C/svg%3E");
+  --cloth:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.95 .045' numOctaves='2' seed='3'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 2.4 -.9'/></filter><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.045 .95' numOctaves='2' seed='9'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 2.4 -.9'/></filter><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='5'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 .9 -.25'/></filter><rect width='100%' height='100%' filter='url(%23w)'/><rect width='100%' height='100%' filter='url(%23f)' opacity='.85'/><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>"),
+  --threads:repeating-linear-gradient(0deg,rgba(255,244,214,.035) 0 1.6px,rgba(0,0,0,0) 1.6px 5px),repeating-linear-gradient(90deg,rgba(255,244,214,.025) 0 1.6px,rgba(0,0,0,0) 1.6px 5px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--sage)}
+body{color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.runway{position:relative;width:1px}
+.stage{position:fixed;inset:0;overflow:hidden;perspective:2600px;background:var(--sage)}
+.half{position:absolute;top:0;bottom:0;width:50%;overflow:hidden}
+.half.l{left:0} .half.r{left:50%}
+/* a page, fitted to the full height and run out to the edges in its own paper colour */
+.pagebox{position:absolute;inset:0;background-repeat:no-repeat}
+.pagebox::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--paper);mix-blend-mode:multiply}
+.pagebox::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--tooth);background-size:400px 400px;mix-blend-mode:soft-light;opacity:.9}
+.half.l .gut,.half.r .gut{position:absolute;top:0;bottom:0;width:24%;pointer-events:none;z-index:2;mix-blend-mode:multiply}
+/* the spine: the pages dive into the binding, deepest at the centre line */
+.half.l .gut{right:0;background:linear-gradient(90deg,rgba(47,38,9,0),rgba(47,38,9,.04) 40%,rgba(47,38,9,.1) 70%,rgba(47,38,9,.22) 88%,rgba(30,24,6,.4) 97.5%,rgba(30,24,6,.5))}
+.half.r .gut{left:0;background:linear-gradient(270deg,rgba(47,38,9,0),rgba(47,38,9,.04) 40%,rgba(47,38,9,.1) 70%,rgba(47,38,9,.22) 88%,rgba(30,24,6,.4) 97.5%,rgba(30,24,6,.5))}
+.half.l .gut::after,.half.r .gut::after{content:"";position:absolute;top:0;bottom:0;width:14px;mix-blend-mode:screen;background:linear-gradient(90deg,rgba(253,252,231,0),rgba(253,252,231,.05),rgba(253,252,231,0))}
+.half.l .gut::after{right:10px}.half.r .gut::after{left:10px}
+
+/* the landing: the left half before the cover comes across */
+.land{position:absolute;inset:0;z-index:3;display:grid;place-items:center;background:var(--sage)}
+.lock{display:flex;flex-direction:column;align-items:center;width:250px;transform:translate(calc(-7.68% + var(--ix,0px)),var(--iy,0px));transition:transform 1.8s cubic-bezier(.5,0,.18,1)}
+/* reveal: the lockup alone in the middle of the screen, then it slides left as the closed book slides in */
+#hr,#cover{transition:translate 1.8s cubic-bezier(.5,0,.18,1)}
+.hold #hr{translate:100% 0}
+.hold #cover{translate:calc(100% + 100px) 0}   /* far enough that its shadow is off-screen too */
+.land{overflow:visible}
+.half.l{overflow:visible;z-index:1}
+.crest{position:relative;width:100%;aspect-ratio:859/945}
+.crest .mh{position:absolute;left:16.83%;top:11.22%;width:81.7%;height:66.46%;fill:var(--ink);opacity:0;transform:scale(.96);transition:opacity 1.15s ease,transform 1.5s cubic-bezier(.2,.75,.2,1)}
+.crest .mf{position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(.96) rotate(-3deg);
+  -webkit-mask-image:radial-gradient(circle at 56% 44%,#000 var(--r),transparent calc(var(--r) + 22%));mask-image:radial-gradient(circle at 56% 44%,#000 var(--r),transparent calc(var(--r) + 22%));
+  transition:--r 2s cubic-bezier(.3,.6,.25,1),opacity .75s ease,transform 2s cubic-bezier(.2,.75,.2,1)}
+.wm{margin:26px 0 0;padding-left:15.36%;display:flex;flex-direction:column;align-items:center;font:400 clamp(15px,1.35vw,20px)/.92 var(--serif);text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap}
+.wm .ln{display:inline-block;overflow:hidden;padding:.04em .02em .06em 0}
+.wm i{display:inline-block;font-style:normal;transform:translate3d(0,110%,0);transition:transform 1.05s cubic-bezier(.2,.75,.2,1);transition-delay:calc(var(--i) * 38ms + 550ms)}
+.on-a .crest .mh{opacity:1;transform:none} .on-a .wm i{transform:none}
+.on-f .crest .mf{--r:95%;opacity:1;transform:none}
+/* the book's thickness: its closed edge throws a shadow onto the bare half */
+.thick{position:absolute;top:0;bottom:0;right:100%;width:90px;pointer-events:none;background:linear-gradient(90deg,rgba(15,14,13,0),rgba(15,14,13,.08) 55%,rgba(15,14,13,.26) 92%,rgba(15,14,13,.42))}
+.cue{position:absolute;left:0;right:0;bottom:30px;text-align:center;font:400 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(15,14,13,.5);opacity:0;transition:opacity 1s ease 2.6s}
+.on-a .cue{opacity:1}
+
+/* the cover: a rigid hardcover board hinged on the centre line */
+.cover{position:absolute;top:0;bottom:0;left:50%;width:50%;transform-style:preserve-3d;transform-origin:0 50%;z-index:6;will-change:transform}
+.cface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.cface.front{background:#2A2208}
+.cface.front img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 50%}
+.cface.front .yir{position:absolute;left:0;right:0;top:7.5%;text-align:center;font:400 clamp(13px,1.15vw,17px)/.95 var(--serif);text-transform:uppercase;color:var(--cream);letter-spacing:-.005em}
+.cface.front .cloth{position:absolute;inset:0;background-image:var(--threads),var(--cloth);mix-blend-mode:overlay;pointer-events:none}
+.cface.front .joint{position:absolute;top:0;bottom:0;left:0;width:34px;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(0,0,0,.22) 9px,rgba(0,0,0,.06) 14px,rgba(255,255,255,.12) 17px,rgba(0,0,0,.3) 21px,rgba(0,0,0,.06) 27px,rgba(0,0,0,0))}
+.cface.back{transform:rotateY(180deg)}
+.cface .shade{position:absolute;inset:0;pointer-events:none;background:#0A0803;opacity:0}
+
+/* the turning leaf: a chain of thin strips, so the paper bends */
+.leaf{position:absolute;top:0;bottom:0;left:50%;width:0;transform-style:preserve-3d;transform-origin:0 50%;z-index:5;will-change:transform}
+.strip{position:absolute;top:0;bottom:0;transform-style:preserve-3d;transform-origin:0 50%}
+.sface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background-repeat:repeat,no-repeat,no-repeat;background-blend-mode:multiply,normal,normal}   /* only the paper grain multiplies */
+.sface.back{transform:rotateY(180deg)}
+.sface i{position:absolute;inset:0;pointer-events:none}
+.cast{position:absolute;top:0;bottom:0;width:50%;pointer-events:none;z-index:4;opacity:0}
+.cast.l{left:0} .cast.r{left:50%}
+
+/* navigation: home, index and overview, small, bottom left */
+.nav{position:fixed;left:24px;bottom:22px;z-index:95;display:flex;gap:2px;padding:3px;background:var(--pill);transition:opacity .8s ease}
+.nav button{display:flex;align-items:center;gap:7px;height:22px;padding:0 10px;border:0;background:transparent;cursor:pointer;font:400 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:rgba(15,14,13,.6)}
+.nav button:hover{color:var(--ink)}
+.nav button[aria-expanded="true"]{background:var(--ink);color:var(--cream)}
+.nav .home svg{width:11px;height:10px;display:block}
+.hold .nav,.hold .vt{opacity:0}
+/* the index and overview pages: full screen, sage, over the book */
+.sheet{position:fixed;inset:0;z-index:90;background:var(--sage);overflow-y:auto;overscroll-behavior:contain;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s linear .45s}
+.sheet.on{opacity:1;visibility:visible;transition:opacity .45s ease}
+.sheet::before{content:"";position:fixed;inset:0;pointer-events:none;background:var(--tooth);background-size:400px 400px;mix-blend-mode:soft-light;opacity:.6}
+.sheet .in{position:relative;max-width:1240px;margin:0 auto;padding:clamp(40px,7vh,84px) clamp(20px,4vw,56px) 110px}
+.sheet header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:clamp(28px,5vh,56px)}
+.sheet h2{margin:0;font:400 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(15,14,13,.6)}
+.sheet .x{border:0;background:none;cursor:pointer;font:400 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(15,14,13,.6)}
+.sheet .x:hover{color:var(--ink)}
+.toc{list-style:none;margin:0;padding:0;border-top:1px solid rgba(15,14,13,.14)}
+.toc button{display:grid;grid-template-columns:64px 1fr auto 52px;align-items:baseline;gap:16px;width:100%;padding:clamp(12px,1.9vh,20px) 0;border:0;border-bottom:1px solid rgba(15,14,13,.14);background:none;text-align:left;cursor:pointer;color:var(--ink);transition:padding-left .4s cubic-bezier(.2,.7,.2,1),color .25s}
+.toc button:hover{padding-left:12px}
+.toc i{font:400 clamp(15px,1.4vw,20px)/1 var(--serif);font-style:normal;color:rgba(15,14,13,.5)}
+.toc b{font:400 clamp(22px,2.6vw,38px)/1.05 var(--serif);letter-spacing:-.015em;font-weight:400}
+.toc em{font:400 10px/1 var(--sans);font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:rgba(15,14,13,.5);white-space:nowrap}
+.toc s{font:400 13px/1 var(--serif);text-decoration:none;color:rgba(15,14,13,.5);text-align:right;font-variant-numeric:tabular-nums}
+.toc li.cur b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:clamp(18px,2.4vw,32px) clamp(14px,1.8vw,24px)}
+.tile{border:0;padding:0;background:none;cursor:pointer;text-align:left}
+.tile .tv{display:grid;grid-template-columns:1fr 1fr;aspect-ratio:1008/720;background:var(--cream);position:relative;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.tile .tv img{width:100%;height:100%;display:block;object-fit:cover}
+.tile .tv::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 46%,rgba(30,24,6,.22) 50%,transparent 54%);pointer-events:none}
+.tile:hover .tv{transform:translateY(-3px)}
+.tile.cur .tv{outline:1.5px solid var(--ink);outline-offset:3px}
+.tile span{display:flex;gap:10px;margin-top:9px;font:400 9px/1.3 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:rgba(15,14,13,.55)}
+.tile span b{font-weight:400;color:var(--ink)}
+.vt{position:fixed;right:24px;bottom:22px;z-index:95;display:flex;gap:2px;padding:3px;background:var(--pill);transition:opacity .8s}
+.vt a{display:grid;place-items:center;height:22px;padding:0 10px;font:400 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:rgba(15,14,13,.55);text-decoration:none}
+.vt a:hover{color:var(--ink)}
+.vt a[aria-current]{background:var(--ink);color:var(--cream)}
+@media (prefers-reduced-motion:reduce){ .crest .mh,.crest .mf,.wm i,.cue{transition:none} }
+</style>
+</head>
+<body class="hold">
+<div class="runway" id="runway"></div>
+<main class="stage" id="stage" aria-label="Harvey Year in Review MMXXVI">
+  <div class="half l" id="hl"><div class="pagebox" id="pl"></div><i class="gut"></i>
+    <div class="land" id="land">
+      <div class="lock">
+        <div class="crest" role="img" aria-label="Harvey"><svg class="mh" viewBox="0 0 93.83 83.96" preserveAspectRatio="none" aria-hidden="true"><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z"/></svg><img class="mf" src="img/monogram-flourish.webp" alt=""></div>
+        <h1 class="wm" aria-label="Year in Review MMXXVI"><span class="ln"><i style="--i:0">Y</i><i style="--i:1">e</i><i style="--i:2">a</i><i style="--i:3">r</i> <i style="--i:4">i</i><i style="--i:5">n</i> <i style="--i:6">R</i><i style="--i:7">e</i><i style="--i:8">v</i><i style="--i:9">i</i><i style="--i:10">e</i><i style="--i:11">w</i></span><span class="ln"><i style="--i:4">M</i><i style="--i:5">M</i><i style="--i:6">X</i><i style="--i:7">X</i><i style="--i:8">V</i><i style="--i:9">I</i></span></h1>
+      </div>
+      <p class="cue">Scroll to open</p>
+    </div>
+  </div>
+  <div class="half r" id="hr"><div class="pagebox" id="pr"></div><i class="gut"></i></div>
+  <i class="cast l" id="castL"></i><i class="cast r" id="castR"></i>
+  <div class="leaf" id="leaf"></div>
+  <div class="cover" id="cover"><i class="thick" id="thick"></i>
+    <div class="cface front"><img src="img/hero.jpg" alt="Painting of a woman in period dress typing on a laptop at a draped table"><p class="yir">Year in Review<br>MMXXVI</p><i class="cloth"></i><i class="joint"></i><i class="shade" id="shF"></i></div>
+    <div class="cface back"><div class="pagebox" id="cb"></div><i class="shade" id="shB"></i></div>
+  </div>
+</main>
+<nav class="nav" aria-label="Book">
+  <button class="home" id="navHome" aria-label="Back to the cover"><svg viewBox="0 0 93.83 83.96" aria-hidden="true"><path fill="currentColor" d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z"/></svg></button>
+  <button id="navIndex" aria-expanded="false" aria-controls="index">Index</button>
+  <button id="navOver" aria-expanded="false" aria-controls="over">Overview</button>
+</nav>
+<section class="sheet" id="index" aria-label="Index"><div class="in"><header><h2>Index · Year in Review MMXXVI</h2><button class="x" data-close>Close</button></header><ol class="toc" id="toc"></ol></div></section>
+<section class="sheet" id="over" aria-label="Overview"><div class="in"><header><h2>Overview · Every spread</h2><button class="x" data-close>Close</button></header><div class="grid" id="grid"></div></div></section>
+<nav class="vt" aria-label="Version"><a href="classic.html">V1</a><a href="scroll.html">V2</a><a href="v3.html">V3</a><a aria-current="page">V4</a></nav>
+<script src="v4-pages.js"></script>
+<script src="v4.js"></script>
+</body>
+</html>
