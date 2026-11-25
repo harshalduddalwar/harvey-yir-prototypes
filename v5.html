@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>/* remember the version you are on, so a refresh reopens it */(function(){try{localStorage.setItem("yir-version","v5");document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest(".vt a[href]");if(!a)return;var h=a.getAttribute("href");try{localStorage.setItem("yir-version",h.indexOf("scroll")>-1?"v2":h.indexOf("v3")>-1?"v3":h.indexOf("v4")>-1?"v4":h.indexOf("v5")>-1?"v5":"v1")}catch(_){}},true);}catch(e){}})();</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harvey Year in Review V5</title>
+<meta name="description" content="V5 of the Harvey 2026 Year in Review: the hardcover book and paper page turn of V1, opened in a darker room taken from the chapter colours, with product-style contents and controls.">
+<link rel="preload" href="fonts/harvey-sans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/harvey-serif.otf" as="font" type="font/otf" crossorigin>
+<style>
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif.otf) format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Harvey Serif';src:url(fonts/harvey-serif-italic.otf) format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'Harvey Sans';src:url(fonts/harvey-sans.woff2) format('woff2-variations'),url(fonts/harvey-sans.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+/* Three moments: the wordmark writes itself on; a 3D book waits on the desk to be turned and opened;
+   opening hands over to an immersive read where the desk takes the colour of the paper, so the page
+   becomes the screen. Pages turn as real leaves you can grab. Everything shares one 1120×800 spread. */
+:root{
+  --cream:#FDFCE7; --white:#FFFFFF; --sage:#D9DFCC; --ink:#0F0E0D; --umber:#2F2609; --pill:#E3E2CF; --mapsage:#D6DAC8;
+  --desk:#CFD4C0; --bg:var(--desk);
+  --serif:'Harvey Serif','Iowan Old Style',Georgia,serif;
+  --sans:'Harvey Sans','Helvetica Neue',Arial,sans-serif;
+  --s:1;
+  /* bookcloth: a coarse linen weave, fibre streaks in both directions, and a little slub */
+  --cloth:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.95 .045' numOctaves='2' seed='3'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 2.4 -.9'/></filter><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.045 .95' numOctaves='2' seed='9'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 2.4 -.9'/></filter><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='1' seed='5'/><feColorMatrix values='1 0 0 0 0  1 0 0 0 0  1 0 0 0 0  0 0 0 .9 -.25'/></filter><rect width='100%' height='100%' filter='url(%23w)'/><rect width='100%' height='100%' filter='url(%23f)' opacity='.85'/><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>"),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.1) 0 1.6px,rgba(255,255,255,.03) 1.6px 2.6px,rgba(0,0,0,.17) 2.6px 3.6px,rgba(0,0,0,.04) 3.6px 5px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.08) 0 1.6px,rgba(255,255,255,.02) 1.6px 2.6px,rgba(0,0,0,.15) 2.6px 3.6px,rgba(0,0,0,.03) 3.6px 5px);
+  /* the raised threads catch light even where the cloth is dark */
+  --threads:repeating-linear-gradient(0deg,rgba(255,244,214,.035) 0 1.6px,rgba(0,0,0,0) 1.6px 5px),repeating-linear-gradient(90deg,rgba(255,244,214,.025) 0 1.6px,rgba(0,0,0,0) 1.6px 5px);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;transition:background-color .7s ease}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;transition:opacity .7s ease;
+  background:radial-gradient(120% 90% at 50% 42%,rgba(253,252,231,.55) 0%,rgba(253,252,231,0) 60%),radial-gradient(140% 120% at 50% 50%,rgba(47,38,9,0) 55%,rgba(47,38,9,.12) 100%)}
+body.open::before{opacity:1;background:radial-gradient(90% 80% at 50% 46%,rgba(253,252,231,.22),rgba(253,252,231,0) 62%),radial-gradient(140% 120% at 50% 50%,rgba(47,38,9,0) 55%,rgba(47,38,9,.1) 100%)}
+.book{transition:box-shadow .8s ease}
+.open .book{box-shadow:0 1px 2px rgba(47,38,9,.14),0 20px 50px -14px rgba(47,38,9,.3),0 50px 100px -40px rgba(47,38,9,.22)}
+.lockup img{transition:filter .7s ease}
+.landing-mark .mh{transition:fill .7s ease}
+p,h1,h2,h3,h4{margin:0;font-weight:400}
+img{display:block}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.abs{position:absolute}
+.label{font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase}
+.preload *,.preload *::before,.preload *::after{transition:none!important}
+
+/* ---------- intro: words either side of the monogram, flourishes unfurl, then everything settles ---------- */
+@property --r{syntax:'<percentage>';inherits:false;initial-value:-25%}
+/* a title page: the monogram on the exact centre, the two lines set centred beneath it */
+.ist{position:fixed;inset:0;z-index:70;display:none;pointer-events:none}
+.intro-on .ist{display:block}
+.ist .wm{position:absolute;left:0;right:0;top:calc(50% + 107.8px + 24px);text-align:center}
+.ist .w{display:flex;justify-content:center;font:400 13px/.9 var(--serif);text-transform:uppercase;letter-spacing:-.01em;white-space:nowrap}
+.ist .ln{display:inline-block;vertical-align:top;overflow:hidden;padding:.04em .02em .06em 0}
+.ist i{display:inline-block;font-style:normal;transform:translate3d(0,110%,0);transition:transform .9s cubic-bezier(.2,.75,.2,1);transition-delay:calc(var(--i) * 30ms)}
+.intro-a .ist i{transform:none}
+#monoC{position:absolute;left:calc(50% - 98px);top:calc(50% - 107.8px);width:196px}
+#monoC .mh{opacity:0;transform:scale(.94);transition:opacity .7s ease,transform 1s cubic-bezier(.2,.75,.2,1)}
+.intro-a #monoC .mh{opacity:1;transform:none}
+/* the flourishes grow out from the letter to its edges */
+#monoC .mf{opacity:0;transform:scale(.96) rotate(-3deg);
+  -webkit-mask-image:radial-gradient(circle at 56% 44%,#000 var(--r),transparent calc(var(--r) + 22%));mask-image:radial-gradient(circle at 56% 44%,#000 var(--r),transparent calc(var(--r) + 22%));
+  transition:--r 1.4s cubic-bezier(.3,.6,.25,1),opacity .5s ease,transform 1.4s cubic-bezier(.2,.75,.2,1)}
+.intro-f #monoC .mf{--r:95%;opacity:1;transform:none}
+/* the hand-off: nothing travels. The title page recedes as one piece, the book rises into the space it
+   leaves, and the corner marks surface where they live — each beat starting as the last one eases out */
+.ist{transform-origin:50% 50%}
+.intro-x .ist{opacity:0;transform:scale(.97);filter:blur(5px);transition:opacity 1.1s cubic-bezier(.4,0,.2,1),transform 1.4s cubic-bezier(.3,0,.2,1),filter 1.1s ease}
+.intro-on .lockup,.intro-on .landing-mark,.intro-on .landing{opacity:0;transform:translate3d(0,6px,0)}
+.intro-c .lockup,.intro-c .landing-mark{opacity:1;transform:none;transition:opacity 1.2s ease,transform 1.4s cubic-bezier(.2,.7,.2,1)}
+.intro-c .landing{opacity:1;transform:none;transition:opacity 1.2s ease .3s,transform 1.4s cubic-bezier(.2,.7,.2,1) .3s}
+.intro-on .persp{opacity:0}
+.intro-on .lift{transform:translate3d(0,40px,0)}
+.intro-b .persp{opacity:1;transition:opacity 1.4s ease}
+.intro-b .lift{transform:none;transition:transform 1.8s cubic-bezier(.2,.7,.15,1)}
+.intro-on .index,.intro-on .hint{opacity:0}
+.intro-c .index,.intro-c .hint{opacity:1;transition:opacity 1.2s ease .5s}
+
+/* the monogram: the Harvey H drawn as a vector, the carved flourishes laid over it */
+.mono{position:relative;aspect-ratio:859/945}
+.mono .mh{position:absolute;left:16.83%;top:11.22%;width:81.7%;height:66.46%;fill:var(--ink)}
+.mono .mf{position:absolute;inset:0;width:100%;height:100%}
+
+/* ---------- stage ---------- */
+.stage{position:fixed;left:50%;top:50%;width:1120px;height:800px;transform:translate(-50%,-50%) scale(var(--s))}
+
+/* the 3D book, built like a real hardcover: 4px boards that overhang a 48px page block, a rounded
+   spine in three facets, headbands, and every face lit from the upper left as the book turns.
+   Geometry is placed by book.js; z runs from 0 (front board) to -56 (back board). */
+.persp{position:absolute;inset:0;z-index:30;visibility:hidden}
+.show3d .persp{visibility:visible}
+.lift{position:absolute;inset:0;perspective:9000px}   /* nearly orthographic: one straight-on point of view */
+.gshadow,.gcontact{position:absolute;border-radius:50%;pointer-events:none;transition:opacity .6s}
+.gshadow{left:320px;top:660px;width:480px;height:90px;background:radial-gradient(closest-side,rgba(47,38,9,.32),rgba(47,38,9,.12) 55%,rgba(47,38,9,0))}
+.gcontact{left:410px;top:690px;width:300px;height:22px;filter:blur(3px);background:radial-gradient(closest-side,rgba(30,24,6,.5),rgba(30,24,6,0))}
+.b3{position:absolute;left:560px;top:0;width:560px;height:800px;transform-style:preserve-3d;transform-origin:280px 400px -32px;cursor:grab;touch-action:none;outline:none}
+.b3.grabbing{cursor:grabbing}
+.f{position:absolute;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.f::after{content:"";position:absolute;inset:0;background:#0A0803;opacity:var(--sh,0);pointer-events:none}
+.grain{position:absolute;inset:0;pointer-events:none;background-image:var(--cloth);mix-blend-mode:overlay;opacity:1}
+.sp::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--threads)}
+.bk::before,.sb::before,.be::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--threads),var(--cloth);mix-blend-mode:overlay;opacity:1}
+.hinge{position:absolute;inset:0;transform-style:preserve-3d;transform-origin:0 50%}
+.cv{inset:0;background:#2A2208;border-radius:0 4px 4px 0}
+/* hardbound: a crisp board edge, light catching the top lip, and the joint groove pressed in beside the spine */
+.cv .rim{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+  box-shadow:inset 0 0 0 1px rgba(10,8,3,.55),inset 0 1.5px 0 rgba(253,252,231,.14),inset -1.5px 0 0 rgba(253,252,231,.07),inset 0 -2px 3px rgba(10,8,3,.4)}
+.cv .groove{position:absolute;top:0;bottom:0;left:20px;width:9px;z-index:3;pointer-events:none;
+  background:linear-gradient(90deg,rgba(253,252,231,.07),rgba(10,8,3,.5) 38%,rgba(10,8,3,.62) 52%,rgba(253,252,231,.1) 78%,rgba(253,252,231,0))}
+.cv .glare{position:absolute;top:-10%;bottom:-10%;left:-60%;width:220%;pointer-events:none;
+  background:linear-gradient(104deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.12) 47%,rgba(255,255,255,.035) 52%,rgba(255,255,255,0) 60%)}
+/* the joint where the board hinges, and a little wear at the edges and corners */
+.cv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:26px;z-index:2;pointer-events:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.5),rgba(0,0,0,.2) 7px,rgba(0,0,0,.05) 10px,rgba(255,255,255,.12) 12px,rgba(0,0,0,.28) 14.5px,rgba(0,0,0,.06) 19px,rgba(0,0,0,0))}
+.cv .wear{position:absolute;inset:0;pointer-events:none;border-radius:inherit;background-image:var(--threads);
+  box-shadow:inset 0 0 0 1px rgba(255,240,200,.06),inset -1px 0 2px rgba(255,240,200,.12),inset 0 0 40px rgba(0,0,0,.3),inset 0 -30px 50px -30px rgba(0,0,0,.35)}
+.inside,.blk{inset:0;background:var(--cream)}
+.inside{transform:translateZ(-9px) rotateY(180deg)}
+.blk{transform:translateZ(-9.5px)}
+.f > .pg{left:0!important;top:0}
+.bk{inset:0;transform:translateZ(-64px) rotateY(180deg);background:linear-gradient(180deg,#3A3011,#2A2208);display:grid;place-items:center;border-radius:3px 0 0 3px}
+.bk svg{width:92px;height:74px;opacity:.85}
+/* board edges: the cover wraps round them */
+.be{background:linear-gradient(90deg,#120E04,#2E250B 45%,#241C07 70%,#120E04);box-shadow:inset 0 0 0 1px rgba(253,252,231,.05)}
+/* spine: three facets, the centre one titled */
+.sp,.sb{background:linear-gradient(180deg,#2A2208,#3A3011 50%,#2A2208)}
+.sp{display:grid;place-items:center}
+.sp span{writing-mode:vertical-rl;font:400 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:rgba(253,252,231,.8);white-space:nowrap}
+/* page block: fore-edge, then head and tail with a headband at the spine end */
+.ed{background:linear-gradient(180deg,rgba(47,38,9,.22),rgba(47,38,9,0) 9%,rgba(47,38,9,0) 91%,rgba(47,38,9,.24)),
+  linear-gradient(90deg,rgba(47,38,9,.18),rgba(47,38,9,0) 18%,rgba(47,38,9,0) 82%,rgba(47,38,9,.18)),
+  repeating-linear-gradient(90deg,#F6F3DC 0 1px,#E2DEC3 1px 2px,#F1EED4 2px 3px)}
+.tp,.bt{background:linear-gradient(90deg,#7A2A1F 0 3px,#EADFC2 3px 4.5px,#7A2A1F 4.5px 6.5px,transparent 6.5px),
+  linear-gradient(90deg,rgba(47,38,9,.2),rgba(47,38,9,0) 20%),
+  linear-gradient(180deg,rgba(47,38,9,.16),rgba(47,38,9,0) 22%,rgba(47,38,9,0) 78%,rgba(47,38,9,.16)),
+  repeating-linear-gradient(180deg,#F6F3DC 0 1px,#E2DEC3 1px 2px,#F1EED4 2px 3px)}
+
+/* ---------- the flat book, read in the immersive view ---------- */
+.book{position:absolute;inset:0;visibility:hidden;touch-action:none}
+.open .book{visibility:visible}
+.spread{position:absolute;inset:0;visibility:hidden}
+.spread.on{visibility:visible}
+.spread.keepL .pg.r,.spread.keepL > :not(.pg),.spread.keepR .pg.l,.spread.keepR > :not(.pg){visibility:hidden}
+.pg{position:absolute;top:0;width:560px;height:800px;overflow:hidden;background:var(--cream);opacity:0}
+.pg.l{left:0}.pg.r{left:560px}
+.pg.vis{opacity:1}
+.pg .fp{position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.pg .fxc,.pg .fxs,.pg .fxcnt{position:absolute;display:block;pointer-events:none}
+.pg .fxs{background-size:560px 800px;background-repeat:no-repeat}
+.pg .fxs.fxn{opacity:0;transition:opacity .45s ease}
+.pg .fxcnt{white-space:nowrap;font-family:var(--serif);font-weight:400;letter-spacing:-.01em;font-variant-numeric:lining-nums;transition-property:opacity,transform}
+.pg::after{content:"";position:absolute;inset:0;pointer-events:none}
+/* only the gutter keeps a memory of the binding */
+.pg.l::after{background:linear-gradient(90deg,rgba(47,38,9,0) 90%,rgba(47,38,9,.05))}
+.pg.r::after{background:linear-gradient(90deg,rgba(47,38,9,.05),rgba(47,38,9,0) 10%)}
+:root{--tooth:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='r' x='0' y='0' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' seed='3' stitchTiles='stitch' result='t'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.045 .09' numOctaves='3' seed='8' stitchTiles='stitch' result='b'/%3E%3CfeComposite in='t' in2='b' operator='arithmetic' k2='.8' k3='.35' result='h'/%3E%3CfeDiffuseLighting in='h' lighting-color='#fff' surfaceScale='3.4' diffuseConstant='1'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.7' intercept='-.89'/%3E%3CfeFuncG type='linear' slope='1.7' intercept='-.89'/%3E%3CfeFuncB type='linear' slope='1.7' intercept='-.89'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(#r)'/%3E%3C/svg%3E");--paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Cfilter id='g' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .27  0 0 0 0 .22  0 0 0 -1.8 1.15'/%3E%3C/filter%3E%3Cfilter id='s' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25  0 0 0 0 .22  0 0 0 0 .18  0 0 0 -6 3.3'/%3E%3C/filter%3E%3Cfilter id='m' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0078125 .0117' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4  0 0 0 0 .36  0 0 0 0 .3  0 0 0 -1.2 .7'/%3E%3C/filter%3E%3Cfilter id='f' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.12 .5' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3  0 0 0 0 .27  0 0 0 0 .22  0 0 0 -3.6 1.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)' opacity='.1'/%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='.24'/%3E%3Crect width='100%25' height='100%25' filter='url(%23s)' opacity='.07'/%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.05'/%3E%3C/svg%3E")}
+/* printed matter: an uncoated sheet. Grain, fibre flecks and mottling sit in the paper (multiply); the tooth
+   of the sheet is lit from the top left, so it catches light and shadow like real stock (soft-light) */
+.pg::after{mix-blend-mode:multiply}
+.pg.l::after{background:var(--paper),linear-gradient(90deg,rgba(47,38,9,.035),rgba(47,38,9,0) 14%,rgba(47,38,9,0) 62%,rgba(47,38,9,.045) 86%,rgba(47,38,9,.13))}
+.pg.r::after{background:var(--paper),linear-gradient(270deg,rgba(47,38,9,.035),rgba(47,38,9,0) 14%,rgba(47,38,9,0) 62%,rgba(47,38,9,.045) 86%,rgba(47,38,9,.13))}
+.pg::before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;background:var(--tooth);background-size:400px 400px;mix-blend-mode:soft-light;opacity:.9}
+.spine{position:absolute;top:0;bottom:0;left:560px;width:118px;transform:translateX(-50%);z-index:20;pointer-events:none;opacity:.75;
+  background:url(img/spine.png) center top/100% 100% no-repeat;mix-blend-mode:multiply}
+
+/* a turning leaf: the page you hold on one face, the next page on the other */
+.turns{position:absolute;inset:0;z-index:25;perspective:2200px;pointer-events:none;transform-style:preserve-3d}
+.leaf{position:absolute;top:0;width:560px;height:800px;transform-style:preserve-3d;will-change:transform}
+.leaf.fw{left:560px;transform-origin:0 50%}
+.leaf.bw{left:0;transform-origin:100% 50%}
+.face{position:absolute;inset:0;overflow:hidden;background:var(--cream);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.back{transform:rotateY(180deg)}
+.face > .pg{left:0!important}
+.face *{transition:none!important;animation:none!important}
+.face .sh{position:absolute;inset:0;opacity:0;pointer-events:none}
+.fw .front .sh,.bw .back .sh{background:linear-gradient(90deg,rgba(15,14,13,.5),rgba(15,14,13,.12) 35%,rgba(15,14,13,.04) 80%,rgba(255,255,255,.1))}
+.fw .back .sh,.bw .front .sh{background:linear-gradient(270deg,rgba(15,14,13,.5),rgba(15,14,13,.12) 35%,rgba(15,14,13,.04) 80%,rgba(255,255,255,.1))}
+.leaf2{position:absolute;top:0;left:560px;width:0;height:800px;transform-style:preserve-3d;transform-origin:0 50%;will-change:transform}
+.strip{position:absolute;top:0;height:800px;transform-style:preserve-3d}
+.sface{position:absolute;top:0;bottom:0;left:-1px;right:-1px;backface-visibility:hidden;-webkit-backface-visibility:hidden;background-color:transparent;background-size:560px 800px;background-repeat:no-repeat}   /* each slice overlaps its neighbours by a pixel and has no backing, so no seam of light shows at the spine or between slices */
+.sface.back{transform:rotateY(180deg)}
+.sface i{position:absolute;inset:0;pointer-events:none;background:#0F0E0D;opacity:0}
+.cast{position:absolute;top:0;width:560px;height:800px;opacity:0;pointer-events:none}
+.cast.r{left:560px;background:linear-gradient(90deg,rgba(15,14,13,.38),rgba(15,14,13,.08) 40%,rgba(15,14,13,0) 75%)}
+.cast.l{left:0;background:linear-gradient(270deg,rgba(15,14,13,.38),rgba(15,14,13,.08) 40%,rgba(15,14,13,0) 75%)}
+
+/* items arrive as a page settles; quick, so motion stays secondary */
+.it{opacity:0;transform:translate3d(0,5px,0);transition:opacity 1s cubic-bezier(.33,0,.2,1),transform 1.3s cubic-bezier(.22,.7,.2,1);transition-delay:calc(var(--d,0) * .55ms)}   /* a quiet fade, settling a few pixels into place */
+/* rules draw across, slowly, as the page settles */
+.pg .fxs.fxh{transform:none;clip-path:inset(0 100% 0 0);transition:opacity .4s ease,clip-path 1.5s cubic-bezier(.45,0,.15,1);transition-delay:calc(var(--d,0) * .55ms)}
+.pg .fxs.fxv{transform:none;clip-path:inset(0 0 100% 0);transition:opacity .4s ease,clip-path 1.5s cubic-bezier(.45,0,.15,1);transition-delay:calc(var(--d,0) * .55ms)}
+.pg.in .fxs.fxh,.pg.in .fxs.fxv{clip-path:inset(0)}
+.pg.done .fxs.fxh,.pg.done .fxs.fxv{transition:none;clip-path:inset(0)}
+.pg.in .it{opacity:1;transform:none}
+.pg.done .it{transition:none;opacity:1;transform:none}   /* the page a turning leaf lands on is already shown */
+.bleed{position:absolute;inset:0;overflow:hidden}
+.bleed img{position:absolute;max-width:none}
+.pg .bleed.it{transform:none}
+@media (prefers-reduced-motion:reduce){ .it{transition:none} body,body::before{transition:none} }
+
+/* ---------- type and data, from E ---------- */
+.intro{font:400 14px/19px var(--serif)}
+.ctas{display:grid;gap:4px;justify-items:start}
+.ctas a{display:inline-flex;align-items:center;height:28px;padding:0 14px;background:var(--pill);color:var(--ink);text-decoration:none;font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase;transition:background .25s}
+.ctas a:hover{background:#D6D4BD}
+.yir{font:400 13px/14px var(--serif);text-transform:uppercase;text-align:center}
+.folio{position:absolute;bottom:26px;font:400 10px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:rgba(15,14,13,.45)}
+.pg.l .folio{left:48px}.pg.r .folio{right:48px}
+.on-dark .folio{color:rgba(253,252,231,.6)}
+.crop{overflow:hidden}
+.crop img{position:absolute;max-width:none}
+.dropcap{width:70px;height:70px;object-fit:cover}
+.drop-text{font:400 13px/18px var(--serif);text-align:justify;hyphens:auto}
+.drop-text p + p{margin-top:9px}
+.drop-text p:first-child{text-indent:78px}
+.headline{font:400 44px/45px var(--serif);letter-spacing:-.01em}
+.ch-head{font:400 40px/42px var(--serif);letter-spacing:-.012em}
+.ch-head .sans{font-family:var(--sans);font-weight:300;letter-spacing:-.025em}
+.ch-para{font:400 14px/19px var(--serif)}
+.block .label{display:block;margin-bottom:10px}
+.block h3{font:400 28px/33px var(--serif);letter-spacing:-.005em}
+.block p{font:400 14px/19px var(--sans);margin-top:10px}
+.big{position:absolute;font-weight:300;font-family:var(--sans);letter-spacing:-.045em;color:var(--cream);white-space:nowrap}
+.chart line,.chart path{stroke:var(--cream);stroke-width:2.6;fill:none}
+.chart .draw{stroke-dasharray:1;stroke-dashoffset:1}
+#marks rect{opacity:0;fill:var(--cream)}
+.dot{position:absolute;width:22.75px;height:22.75px;border-radius:50%;background:#D9D9D7;opacity:.28;transition:opacity .3s}
+.dot.on{opacity:1}
+.rule{position:absolute;height:1.5px;background:var(--cream)}
+.fig{position:absolute;width:520px;height:200px;border-top:1.5px solid var(--ink)}
+.fig b{position:absolute;left:-5px;top:8px;font:300 136px/120px var(--sans);letter-spacing:-.045em}
+.fig span{position:absolute;left:0;top:150px;font:400 14px/14px var(--sans)}
+.legend{display:flex;align-items:center;gap:6px;font:400 13px/1 var(--sans)}
+.legend i{width:16.5px;height:16.5px;border-radius:50%;background:#C9A64B;box-shadow:inset 0 0 0 3.5px #FDFCE7,inset 0 0 0 6px #6E5A1A}
+.legend i.soon{background:#FDFCE7}
+.hint-in{font:400 11px/1 var(--sans);color:rgba(15,14,13,.55);display:flex;align-items:center;gap:6px}
+.hint-in::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+.mapbox{overflow:hidden;outline:1px solid var(--ink);outline-offset:-1px;cursor:grab}
+.mapbox img{position:absolute;left:-12%;top:-12%;width:124%;height:124%;object-fit:cover;max-width:none;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.pg.in #reachMap{animation:reachDrift 14s ease-in-out infinite alternate}
+@keyframes reachDrift{from{transform:translate3d(0,10px,0)}to{transform:translate3d(-40px,-10px,0)}}
+.axis{position:absolute;left:64px;top:520px;width:1112px;height:1.5px;background:rgba(15,14,13,.18)}
+.axis i{position:absolute;inset:0;background:var(--ink);transform-origin:left;transform:scaleX(0)}
+.mo{position:absolute;top:498px;font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase;color:rgba(15,14,13,.4);transition:color .5s}
+.mo.on{color:var(--ink)}
+.mk{position:absolute;top:513px;width:16px;height:16px;margin-left:-8px;display:grid;place-items:center;opacity:0;transform:scale(.4);transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.mk::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--sage);box-shadow:inset 0 0 0 1.5px var(--ink);transition:background .3s,transform .3s}
+.mk.show{opacity:1;transform:none}
+.mk.on::before{background:var(--ink);transform:scale(1.3)}
+.mk:hover::before{background:var(--ink)}
+.lt{position:absolute;width:104px;font:400 11px/13px var(--sans);color:rgba(15,14,13,.5);text-align:left;transition:color .3s,opacity .4s;opacity:0}
+.lt.show{opacity:1}
+.lt.on,.lt:hover{color:var(--ink)}
+.lt::before{content:"";position:absolute;left:0;top:-12px;width:1px;height:8px;background:currentColor;opacity:.5}
+.lt.rt::before{left:auto;right:0}
+.feat{left:60px;top:150px;width:440px}
+.feat .label{display:block;margin-bottom:12px}
+.feat h4{font:400 40px/44px var(--serif);letter-spacing:-.01em}
+.feat p{font:400 15px/20px var(--sans);margin-top:12px;max-width:340px}
+.feat .swap{transition:opacity .35s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.feat.swapping .swap{opacity:0;transform:translate3d(0,6px,0)}
+.count{font:400 10px/1 var(--sans);letter-spacing:.04em;color:rgba(15,14,13,.45);text-transform:uppercase}
+.end-t{font:400 30px/35px var(--serif);letter-spacing:-.005em}
+.restart{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 16px;background:var(--pill);font:400 10px/1 var(--sans);letter-spacing:.02em;text-transform:uppercase;transition:background .25s}
+.restart:hover{background:#D6D4BD}
+.index li.soon-ish button{color:rgba(15,14,13,.32)}
+.index li.soon-ish.on button,.index li.soon-ish button:hover{color:var(--ink)}
+
+/* ---------- chrome around the book ---------- */
+.lockup{position:fixed;left:32px;top:32px;width:100px;height:22px;z-index:45}
+.lockup img{display:block}
+.landing{position:fixed;left:32px;top:70px;width:260px;z-index:45;display:grid;gap:16px;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+body:not(.closed) .landing{opacity:0;transform:translate3d(0,-6px,0);pointer-events:none}
+.landing-mark{position:fixed;left:32px;bottom:24px;width:68px;z-index:45}
+.hint{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:45;font:400 10px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:rgba(15,14,13,.5);white-space:nowrap;transition:opacity .5s ease;pointer-events:none}
+.hint.gone{opacity:0!important}
+
+/* index: the contents bar, now with an overview of every spread and a preview on hover */
+.index{position:fixed;left:32px;top:50%;transform:translateY(-50%);z-index:50;width:44px;padding:8px 0 6px;overflow:hidden;
+  background:var(--pill);transition:width .45s cubic-bezier(.2,.7,.2,1)}
+.index:hover,.index:focus-within{width:262px}
+.ovbtn{display:flex;align-items:center;gap:8px;width:100%;height:28px;padding:0 14px 0 16px;margin-bottom:6px;white-space:nowrap;color:rgba(15,14,13,.55);transition:color .25s}
+.ovbtn:hover{color:var(--ink)}
+.ovbtn svg{flex:none;width:12px;height:12px}
+.ovbtn .t{margin-left:8px;font:400 13px/1 var(--sans)}
+.index ol{list-style:none;margin:0;padding:6px 0 0;border-top:1px solid rgba(15,14,13,.08)}
+.index li button{display:flex;align-items:center;gap:8px;width:100%;height:21px;padding:0 14px 0 8px;text-align:left;white-space:nowrap;color:rgba(15,14,13,.5);transition:color .25s}
+.index li button:hover{color:var(--ink)}
+.index li button i{flex:none;width:28px;height:1.5px;display:flex;align-items:center;justify-content:center}
+.index li button i::before{content:"";width:8px;height:1px;background:currentColor;opacity:.45;transition:width .4s cubic-bezier(.2,.7,.2,1)}
+.index li.on button i::before{width:14px;opacity:.8}
+.index li.ch button i{height:auto;font:400 13px/1 var(--serif);font-style:normal;white-space:nowrap}
+.index li.ch button i::before{content:none}
+.index li.on button{color:var(--ink)}
+.index .t{font:400 13px/1 var(--sans);opacity:0;transition:opacity .25s}
+.index li.ch .t{font-family:var(--serif)}
+.index:hover .t,.index:focus-within .t{opacity:1;transition-delay:.1s}
+.index .turn{display:flex;margin-top:8px;padding:6px 0 0 4px;border-top:1px solid rgba(15,14,13,.08)}
+.index .turn button{width:20px;height:24px;display:grid;place-items:center;color:rgba(15,14,13,.55);transition:color .25s}
+.index .turn button:hover{color:var(--ink)}
+.index .turn button:disabled{opacity:.3;cursor:default;color:rgba(15,14,13,.55)}
+
+.preview{position:fixed;left:306px;top:0;z-index:49;width:224px;height:160px;overflow:hidden;background:var(--cream);pointer-events:none;
+  box-shadow:0 1px 2px rgba(47,38,9,.12),0 14px 30px -10px rgba(47,38,9,.3);opacity:0;transform:translate3d(-6px,0,0);transition:opacity .2s ease,transform .3s cubic-bezier(.2,.7,.2,1),top .3s cubic-bezier(.2,.7,.2,1)}
+.preview.on{opacity:1;transform:none}
+.thumb{position:absolute;left:0;top:0;width:1120px;height:800px;transform-origin:0 0;pointer-events:none}
+.thumb *{transition:none!important;animation:none!important}
+.thumb .spread{visibility:visible}
+
+/* overview: every spread at once, grouped in reading order */
+.ov{position:fixed;inset:0;z-index:60;background:rgba(227,226,207,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  overflow:auto;padding:88px 128px 80px;opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s .3s}
+.ov.on{opacity:1;visibility:visible;transition:opacity .3s ease}
+.ov-head{position:fixed;left:128px;right:128px;top:32px;display:flex;justify-content:space-between;align-items:center}
+.ov-head .label{color:rgba(15,14,13,.55)}
+/* the overview's chrome sits outside its scrolling, frosted layer, so it stays put while the grid moves */
+.ov-chrome{position:fixed;inset:0;z-index:61;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s}
+.ov.on + .ov-chrome{opacity:1;visibility:visible;transition:opacity .4s ease}
+.ov-chrome .ov-head,.ov-chrome .ov-close{pointer-events:auto}
+/* the overview carries the same marks as the page: the wordmark top left, the H with its flourishes bottom left */
+.ov-lock{position:fixed;left:32px;top:32px;width:100px;height:22px;display:block;z-index:2}
+.ov-mark{position:fixed;left:32px;bottom:24px;width:68px;z-index:2}
+.ov-close{font:400 10px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;height:28px;padding:0 14px;background:var(--cream)}
+.ov-close:hover{background:#fff}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:36px 22px;max-width:1280px;margin:0 auto}
+.tile{display:block;text-align:left;opacity:0;transform:translate3d(0,10px,0);transition:opacity .4s ease,transform .5s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i) * 28ms)}
+.ov.on .tile{opacity:1;transform:none}
+.tv{position:relative;aspect-ratio:1120/800;overflow:hidden;background:var(--cream);box-shadow:0 1px 2px rgba(47,38,9,.1);transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.tile:hover .tv{transform:translate3d(0,-3px,0);box-shadow:0 1px 2px rgba(47,38,9,.1),0 16px 30px -12px rgba(47,38,9,.35)}
+.tile.on .tv{box-shadow:0 2px 4px rgba(47,38,9,.1),0 14px 34px -12px rgba(47,38,9,.32)}
+/* every spread in the overview gets its spine: a dark crease at the centre easing onto both pages */
+.tile:not(:first-child) .tv::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;mix-blend-mode:multiply;
+  background:linear-gradient(90deg,rgba(47,38,9,0) 36%,rgba(47,38,9,.08) 43%,rgba(47,38,9,.22) 48%,rgba(30,24,6,.46) 49.7%,rgba(30,24,6,.5) 50%,rgba(30,24,6,.46) 50.3%,rgba(47,38,9,.22) 52%,rgba(47,38,9,.08) 57%,rgba(47,38,9,0) 64%)}
+.tile:not(:first-child) .tv::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:3%;transform:translateX(-50%);z-index:3;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(90deg,rgba(253,252,231,0),rgba(253,252,231,.06) 20%,rgba(253,252,231,0) 38%,rgba(253,252,231,0) 62%,rgba(253,252,231,.06) 80%,rgba(253,252,231,0))}
+/* the cover tile: just the closed book on the right, nothing on the left; its own soft shadow when current */
+.tile:first-child .tv{background:transparent!important;box-shadow:none!important;overflow:visible}
+.tile:first-child:hover .tv{box-shadow:none!important}
+.tile:first-child .thumb > div{box-shadow:0 1px 2px rgba(47,38,9,.1)}
+.tile:first-child.on .thumb > div,.tile:first-child:hover .thumb > div{box-shadow:0 10px 20px rgba(47,38,9,.1),0 70px 170px -60px rgba(47,38,9,.32)}
+.tile .thumb{transform:scale(var(--k,.2))}
+.tcap{display:flex;gap:10px;margin-top:12px;align-items:baseline;color:rgba(15,14,13,.6);transition:color .25s}
+.tile:hover .tcap,.tile.on .tcap{color:var(--ink)}
+.tcap i{font:400 14px/1 var(--serif);font-style:normal;min-width:20px}
+.tcap span{font:400 13px/1.2 var(--sans)}
+.tcap.ch span{font:400 15px/1.2 var(--serif)}
+
+/* a quiet label that rides with the pointer */
+.cursor{position:fixed;left:0;top:0;z-index:80;pointer-events:none}
+.cursor span{position:absolute;left:16px;top:14px;height:22px;padding:0 9px;display:flex;align-items:center;white-space:nowrap;
+  font:400 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--cream);
+  opacity:0;transform:scale(.85);transform-origin:0 0;transition:opacity .18s ease,transform .25s cubic-bezier(.2,.7,.2,1)}
+.cursor.on span{opacity:1;transform:none}
+@media (pointer:coarse){ .cursor{display:none} }
+@media (max-width:760px){ .index{left:8px} .landing{width:200px} .ov{padding:80px 16px} .ov-head{left:16px;right:16px} }
+/* version toggle, for comparing the two intros */
+.vt{position:fixed;right:32px;bottom:24px;z-index:95;display:flex;gap:2px;padding:3px;background:var(--pill)}
+.vt a{display:grid;place-items:center;height:22px;padding:0 10px;font:400 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:rgba(15,14,13,.55);text-decoration:none;transition:background .25s,color .25s}
+.vt a:hover{color:var(--ink)}
+.vt a[aria-current]{background:var(--ink);color:var(--cream);cursor:default}
+/* =====================================================================================================
+   V5 — Direction 1's book and page turn, in a darker room taken from the colour system.
+   Each chapter takes its pair: the dark colour fills the room, the light one marks the chrome.
+   The chrome borrows from the Harvey product UI: solid panels, 1px hairlines, 8px corners, quiet badges.
+   ===================================================================================================== */
+:root{--ivory:#F4F2EC;--bg:#2F2609;--acc:#F4F2EC;--line:rgba(244,242,236,.13);--mute:rgba(244,242,236,.62);--faint:rgba(244,242,236,.38);
+  --panel:color-mix(in srgb,var(--bg) 58%,#0B0A08);color-scheme:dark}
+body{background:var(--bg);color:var(--ivory);transition:background-color 1.4s ease}
+body::before,body.open::before{content:none}
+.lockup img,.ov-lock{filter:invert(.95) sepia(.08)}
+.mono .mh{fill:var(--ivory)}
+.ist .w{color:var(--ivory)}
+
+/* the room: A, the chapter's painting as a faint tinted ambience; B, the colour alone with a cloth grain */
+.amb{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.amb i{position:absolute;inset:-12%;background-size:cover;background-position:50% 40%;opacity:0;mix-blend-mode:luminosity;
+  filter:blur(42px) saturate(.6) contrast(.9);transition:opacity 2s ease;animation:ambDrift 46s ease-in-out infinite alternate}
+.bg-a .amb i.on{opacity:.3}
+@keyframes ambDrift{from{transform:scale(1.04) translate3d(-1.5%,0,0)}to{transform:scale(1.12) translate3d(1.5%,-1%,0)}}
+.amb::before{content:"";position:absolute;inset:0;background-image:var(--cloth);background-size:160px 160px;mix-blend-mode:soft-light;opacity:0;transition:opacity 1s ease}
+.bg-b .amb::before{opacity:.15}
+.amb::after{content:"";position:absolute;inset:0;background:radial-gradient(110% 95% at 50% 46%,rgba(8,7,5,0) 38%,rgba(8,7,5,.5) 100%)}
+@media (prefers-reduced-motion:reduce){ .amb i{animation:none} }
+/* A · Ambient: the oil-sketch ground from the Figma draft (Web BG · B8 · Margin), with a light scrim */
+.amb .pic{position:absolute;inset:0;background:url(img/bg-ambient-b8.webp) 50% 50%/cover no-repeat;opacity:0;transition:opacity 1.2s ease}
+.amb .pic::after{content:"";position:absolute;inset:0;background:rgba(15,14,13,.2)}
+.bg-a .amb .pic{opacity:1}
+.bg-a .amb i.on{opacity:0}
+
+/* the closed book's shadow, on a dark floor */
+.gshadow{background:radial-gradient(closest-side,rgba(0,0,0,.55),rgba(0,0,0,.2) 55%,rgba(0,0,0,0))}
+.gcontact{background:radial-gradient(closest-side,rgba(0,0,0,.7),rgba(0,0,0,0))}
+
+/* ---------- the open book keeps its case: boards showing past the pages, the page block's edges ---------- */
+.open .book{box-shadow:none}
+.case{position:absolute;left:-16px;right:-16px;top:-13px;bottom:-13px;border-radius:5px;background:#2A2208;opacity:0;transition:opacity .6s ease;pointer-events:none;
+  box-shadow:inset 0 1px 0 rgba(253,252,231,.1),inset 0 -3px 0 rgba(0,0,0,.35),inset 0 0 0 1px rgba(10,8,3,.6),
+    0 2px 3px rgba(0,0,0,.35),0 28px 60px -18px rgba(0,0,0,.65),0 70px 140px -50px rgba(0,0,0,.55)}
+.open .case{opacity:1}
+.case::before{content:"";position:absolute;inset:0;border-radius:inherit;background-image:var(--threads),var(--cloth);mix-blend-mode:overlay}
+/* the hinge: the case bends round the spine, darker where it dips */
+.case::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:60px;transform:translateX(-50%);
+  background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.35) 40%,rgba(0,0,0,.5) 50%,rgba(0,0,0,.35) 60%,rgba(0,0,0,0))}
+/* the page block, seen at the fore-edges: more leaves under your left hand as you read on */
+.stack{position:absolute;top:2px;bottom:2px;pointer-events:none;transition:width .6s ease;
+  background:linear-gradient(180deg,rgba(47,38,9,.25),rgba(47,38,9,0) 6%,rgba(47,38,9,0) 94%,rgba(47,38,9,.3)),repeating-linear-gradient(90deg,#F2EFD8 0 1px,#C9C3A6 1px 1.7px)}
+.stack.l{right:100%;border-radius:2px 0 0 2px;box-shadow:inset -2px 0 3px rgba(47,38,9,.25)}
+.stack.r{left:100%;border-radius:0 2px 2px 0;box-shadow:inset 2px 0 3px rgba(47,38,9,.25)}
+
+/* ---------- chrome ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px;border-radius:8px;font:500 12.5px/1 var(--sans);letter-spacing:-.005em;text-decoration:none;white-space:nowrap;
+  transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+.btn svg{width:12px;height:12px}
+.btn.solid{background:var(--ivory);color:#0F0E0D}
+.btn.solid:hover{background:#fff}
+.btn.ghost{color:var(--ivory);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.ghost:hover{background:rgba(244,242,236,.07);box-shadow:inset 0 0 0 1px rgba(244,242,236,.24)}
+.acts{position:fixed;right:32px;top:26px;z-index:46;display:flex;gap:8px}
+.lockup{top:31px}
+
+/* the chapter you are in, as a badge at the top */
+.chip{position:fixed;left:50%;top:26px;z-index:46;display:flex;align-items:center;gap:10px;height:32px;padding:0 14px 0 6px;border-radius:999px;
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);transform:translate(-50%,0);white-space:nowrap;
+  transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1),background-color 1.4s ease}
+.chip b{display:grid;place-items:center;min-width:22px;height:20px;padding:0 6px;border-radius:999px;background:var(--acc);color:#0F0E0D;font:600 10px/1 var(--sans);letter-spacing:.04em;transition:background-color 1s ease}
+.chip span{font:500 12.5px/1 var(--sans);color:var(--ivory)}
+.chip em{font:400 12px/1 var(--sans);font-style:normal;color:var(--faint);font-variant-numeric:tabular-nums;padding-left:10px;border-left:1px solid var(--line)}
+body.closed .chip{opacity:0;transform:translate(-50%,-6px);pointer-events:none}
+
+/* progress: one segment per chapter, filling in its light colour */
+.prog{position:fixed;left:50%;bottom:28px;z-index:46;display:flex;align-items:center;gap:14px;transform:translateX(-50%);transition:opacity .5s ease}
+body.closed .prog{opacity:0;pointer-events:none}
+.segs{display:flex;gap:4px;width:min(420px,46vw)}
+.segs button{position:relative;height:14px;flex:var(--n) 1 0;min-width:6px}
+.segs button::before,.segs button::after{content:"";position:absolute;left:0;top:5.5px;height:3px;border-radius:2px}
+.segs button::before{right:0;background:rgba(244,242,236,.16);transition:background-color .2s}
+.segs button:hover::before{background:rgba(244,242,236,.32)}
+.segs button::after{width:calc(var(--f,0) * 100%);background:var(--c,var(--ivory));transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.cnt{font:500 11px/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--mute);height:24px;display:grid;place-items:center;padding:0 9px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+
+.landing{top:86px}
+.intro{color:rgba(244,242,236,.78);font-size:15px;line-height:21px}
+.hint{bottom:28px;height:30px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  font:500 11.5px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--mute)}
+.hint kbd{font:500 10px/1 var(--sans);height:18px;min-width:18px;padding:0 5px;display:grid;place-items:center;border-radius:4px;background:rgba(244,242,236,.08);box-shadow:inset 0 0 0 1px var(--line);color:var(--ivory)}
+.landing-mark{bottom:22px;width:60px}
+
+/* ---------- contents: a product-style side rail. Solid, hairline, 8px rows; collapses to numerals ---------- */
+.index{left:24px;width:54px;padding:6px;border-radius:12px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line),0 16px 40px -16px rgba(0,0,0,.6);
+  transition:width .4s cubic-bezier(.2,.7,.2,1),background-color 1.4s ease}
+.index:hover,.index:focus-within{width:288px}
+.ovbtn{height:34px;padding:0 0 0 13px;margin:0 0 4px;border-radius:8px;color:var(--mute);gap:0}
+.ovbtn:hover{background:rgba(244,242,236,.06);color:var(--ivory)}
+.ovbtn svg{width:14px;height:14px}
+.ovbtn .t{margin-left:17px;font:500 13px/1 var(--sans)}
+.ovbtn kbd{margin-left:auto;margin-right:8px;font:500 10px/1 var(--sans);height:18px;min-width:18px;padding:0 5px;display:grid;place-items:center;border-radius:4px;box-shadow:inset 0 0 0 1px var(--line);color:var(--faint)}
+.index ol{padding:6px 0;border-top:1px solid var(--line)}
+.index ol li + li{margin-top:2px}
+.index li button{height:32px;padding:0 10px 0 6px;gap:12px;border-radius:8px;color:var(--mute);transition:background-color .2s,color .2s}
+.index li button:hover{background:rgba(244,242,236,.06);color:var(--ivory)}
+.index li.on button{background:rgba(244,242,236,.1);color:var(--ivory)}
+.index li button i,.index li.ch button i{flex:none;width:30px;height:20px;display:grid;place-items:center;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line);
+  font:600 9.5px/1 var(--sans);letter-spacing:.04em;font-style:normal;color:inherit;transition:background-color .3s,color .3s,box-shadow .3s}
+.index li button i::before{content:"";width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.7}
+.index li.ch button i::before{content:none}
+.index li.on button i{background:var(--acc);box-shadow:none;color:#0F0E0D}
+.index li.on button i::before{width:4px;opacity:1}
+.index .t,.index li.ch .t{font:500 13px/1 var(--sans)}
+.index .pgn{margin-left:auto;font:400 11px/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--faint);opacity:0;transition:opacity .25s}
+.index:hover .pgn,.index:focus-within .pgn{opacity:1;transition-delay:.1s}
+.index li.soon-ish button{color:var(--mute)}
+.index .turn{margin-top:4px;padding:6px 0 0;border-top:1px solid var(--line);gap:2px;align-items:center}
+.index .turn button{width:20px;height:28px;border-radius:7px;color:var(--mute)}
+.index .turn button:hover{background:rgba(244,242,236,.08);color:var(--ivory)}
+.index .turn button:disabled{color:var(--faint);background:none}
+.index .turn .cnt{margin-left:auto;margin-right:4px;opacity:0;transition:opacity .25s;box-shadow:none;padding:0}
+.index:hover .turn .cnt,.index:focus-within .turn .cnt{opacity:1}
+.preview{border-radius:8px;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 20px 40px -12px rgba(0,0,0,.65)}
+
+/* overview: a solid room in the chapter's colour, no glass */
+.ov{background:color-mix(in srgb,var(--bg) 80%,#0B0A08);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ov-close{height:32px;padding:0 14px;border-radius:8px;background:none;color:var(--ivory);box-shadow:inset 0 0 0 1px var(--line);font:500 12.5px/1 var(--sans);letter-spacing:0;text-transform:none}
+.ov-close:hover{background:rgba(244,242,236,.07)}
+.tv{border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.tile:hover .tv,.tile.on .tv{box-shadow:0 1px 2px rgba(0,0,0,.3),0 18px 34px -12px rgba(0,0,0,.6)}
+.tile.on .tv{outline:1.5px solid var(--acc);outline-offset:4px}
+.tcap{color:var(--faint)}
+.tile:hover .tcap,.tile.on .tcap{color:var(--ivory)}
+.tcap i{font:600 10px/1 var(--sans);letter-spacing:.04em}
+.tcap span,.tcap.ch span{font:500 13px/1.2 var(--sans)}
+
+/* the label that rides with the pointer, as a pill */
+.cursor span{height:24px;padding:0 10px;border-radius:999px;background:var(--ivory);color:#0F0E0D;font:600 10px/1 var(--sans);letter-spacing:.04em}
+
+/* the background choice, and the version toggle, as segmented controls */
+.seg{position:fixed;right:32px;z-index:95;display:flex;align-items:center;gap:2px;padding:3px;border-radius:9px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);transition:background-color 1.4s ease}
+.seg > span{font:500 11px/1 var(--sans);color:var(--faint);padding:0 8px 0 7px}
+.seg a,.seg button{display:grid;place-items:center;height:24px;padding:0 10px;border-radius:6px;font:500 11px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--mute);text-decoration:none;transition:background .2s,color .2s}
+.seg a:hover,.seg button:hover{color:var(--ivory)}
+.seg a[aria-current],.seg button[aria-pressed="true"]{background:var(--ivory);color:#0F0E0D;cursor:default}
+.vt{bottom:22px;background:var(--panel)}
+.bgt{bottom:62px}
+@media (max-width:900px){ .chip{display:none} .acts .ghost{display:none} }
+@media (max-width:760px){ .acts{display:none} .segs{width:50vw} .bgt{bottom:62px} }
+
+/* ===================== V5 markup: redline pen and tear-off clipping ===================== */
+:root{--redline:#C8211A}
+.pg > .mk-ink,.mk-leafink svg{position:absolute;top:0;left:0;width:560px;height:800px;z-index:2;pointer-events:none;mix-blend-mode:multiply;overflow:visible}
+.mk-ink path,.mk-leafink path{fill:var(--redline);fill-opacity:.9}
+.mk-leafink{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+
+/* the tray: a pen rest and a slip of paper, at the right of the desk */
+.mk-tray{position:fixed;right:24px;top:50%;z-index:46;display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;padding:6px;border-radius:14px;
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line),0 16px 40px -16px rgba(0,0,0,.6);transform:translateY(-50%);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1),background-color 1.4s ease}
+body.closed .mk-tray,.intro-on .mk-tray{opacity:0;pointer-events:none;transform:translate(16px,-50%)}
+.mk-tool{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;padding:8px 0 8px;border-radius:9px;color:var(--mute);transition:background .2s,color .2s}
+.mk-tool:hover{background:rgba(244,242,236,.06);color:var(--ivory)}
+.mk-tool[aria-pressed="true"]{background:rgba(244,242,236,.1);color:var(--ivory);box-shadow:inset 0 0 0 1px rgba(244,242,236,.16)}
+.mk-tool .lab{display:flex;flex-direction:column;align-items:center;gap:4px;font:500 10.5px/1 var(--sans)}
+.mk-tool kbd{font:500 9.5px/1 var(--sans);height:16px;min-width:16px;padding:0 4px;display:grid;place-items:center;border-radius:4px;box-shadow:inset 0 0 0 1px var(--line);color:var(--faint)}
+.mk-tool[aria-pressed="true"] kbd{background:var(--acc);color:#0F0E0D;box-shadow:none}
+.mk-tool .slot{position:relative;display:block;width:30px;height:128px;border-radius:15px;background:rgba(0,0,0,.28);box-shadow:inset 0 2px 5px rgba(0,0,0,.45),inset 0 0 0 1px rgba(244,242,236,.05)}
+.mk-tool .nib-pen{position:absolute;left:50%;top:50%;width:210px;height:22px;transform:translate(-50%,-50%) rotate(90deg) scale(.58);transition:transform .45s cubic-bezier(.3,1.4,.4,1),opacity .3s ease;filter:drop-shadow(-2px 0 2px rgba(0,0,0,.5))}
+.mk-tool:hover .nib-pen{transform:translate(-50%,calc(-50% - 6px)) rotate(90deg) scale(.58)}
+.mk-tool[aria-pressed="true"] .nib-pen{transform:translate(-50%,calc(-50% - 40px)) rotate(90deg) scale(.58);opacity:0}   /* lifted out of the rest: it is in your hand */
+.mk-tool .slip{width:44px;height:56px;border-radius:9px;display:grid;place-items:center;background:rgba(0,0,0,.22)}
+.mk-tool .slip svg{transition:transform .35s cubic-bezier(.3,1.4,.4,1);filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.mk-tool:hover .slip svg,.mk-tool[aria-pressed="true"] .slip svg{transform:rotate(-6deg) translateY(-2px)}
+.mk-tray .rule{display:block;width:28px;height:1px;margin:4px 0;background:var(--line)}
+.mk-mini{position:relative;display:grid;place-items:center;width:40px;height:30px;border-radius:8px;color:var(--mute);transition:background .2s,color .2s,width .25s}
+.mk-mini svg{width:15px;height:15px}
+.mk-mini:hover:not(:disabled){background:rgba(244,242,236,.07);color:var(--ivory)}
+.mk-mini:disabled{opacity:.3;cursor:default}
+.mk-mini b{display:none;font:600 10px/1 var(--sans)}
+.mk-mini.arm{background:var(--redline);color:#fff}
+.mk-mini.arm svg{display:none}.mk-mini.arm b{display:block}
+
+/* the pen in the hand: nib at the pointer, its shadow falling away from the nib the higher it is held */
+.mk-pen{position:fixed;left:0;top:0;z-index:85;pointer-events:none;opacity:0;transition:opacity .2s}
+.mk-pen.on{opacity:1}
+.mk-pen .bd,.mk-pen .sh{position:absolute;left:0;top:0;transform-origin:0 0}
+.mk-pen .bd{transform:rotate(-42deg) translate(0,-11px);transition:transform .12s ease-out}
+.mk-pen .bd svg{display:block;filter:drop-shadow(0 1px 0 rgba(0,0,0,.25))}
+.mk-pen .sh{opacity:.32;filter:blur(3.5px);transform:translate(9px,9px) rotate(-30deg) translate(0,-11px);transition:transform .12s ease-out,opacity .12s}
+.mk-pen.down .bd{transform:rotate(-44deg) translate(0,-11px) scale(.985)}
+.mk-pen.down .sh{opacity:.42;filter:blur(2px);transform:translate(1px,1px) rotate(-33deg) translate(0,-11px)}
+body.mk-pen-on .open .book,body.mk-pen-on.open .book{cursor:none}
+body.mk-tear-on.open .book{cursor:crosshair}
+
+.mk-hint{position:fixed;left:50%;bottom:62px;z-index:46;height:30px;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);
+  font:500 11.5px/1 var(--sans);color:var(--mute);white-space:nowrap;transform:translate(-50%,8px);opacity:0;pointer-events:none;transition:opacity .3s,transform .4s cubic-bezier(.2,.7,.2,1)}
+.mk-hint.on{opacity:1;transform:translate(-50%,0)}
+.mk-hint kbd{font:500 10px/1 var(--sans);height:18px;min-width:18px;padding:0 5px;display:grid;place-items:center;border-radius:4px;background:rgba(244,242,236,.08);box-shadow:inset 0 0 0 1px var(--line);color:var(--ivory)}
+
+/* the box being torn: a perforated outline with scissors at the corner */
+.mk-sel{position:absolute;z-index:4;pointer-events:none;border-radius:2px;background:rgba(200,33,26,.05);
+  background-image:linear-gradient(90deg,var(--redline) 55%,transparent 0),linear-gradient(90deg,var(--redline) 55%,transparent 0),linear-gradient(0deg,var(--redline) 55%,transparent 0),linear-gradient(0deg,var(--redline) 55%,transparent 0);
+  background-size:7px 1.4px,7px 1.4px,1.4px 7px,1.4px 7px;background-position:0 0,0 100%,0 0,100% 0;background-repeat:repeat-x,repeat-x,repeat-y,repeat-y;opacity:.55}
+.mk-sel.ok{opacity:1}
+.mk-sel .sc{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--redline);color:#fff}
+.mk-sel .sc svg{width:11px;height:11px}
+.mk-sel em{position:absolute;left:14px;top:-22px;font:600 9px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;font-style:normal;color:#fff;background:var(--redline);padding:4px 7px;border-radius:999px;white-space:nowrap;opacity:0;transition:opacity .2s}
+.mk-sel.ok em{opacity:1}
+/* the hole a tear leaves: the leaf beneath, in shadow, until the sheet is closed */
+.mk-hole{position:absolute;z-index:4;pointer-events:none;background:#CFCBBC;box-shadow:inset 0 3px 8px rgba(15,14,13,.35);transition:opacity 1.1s ease}
+.mk-hole::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,13,.2),rgba(15,14,13,0) 30%)}
+.mk-hole.mend{opacity:0}
+.mk-fly{position:fixed;z-index:120;pointer-events:none;transform-origin:50% 50%}
+.mk-fly canvas{display:block;width:100%;height:100%}
+
+/* the share sheet */
+.mk-sheet{position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:24px;visibility:hidden;pointer-events:none}
+.mk-sheet.on{visibility:visible;pointer-events:auto}
+.mk-dim{position:absolute;inset:0;background:rgba(8,7,6,.62);opacity:0;transition:opacity .4s ease}
+.mk-sheet.on .mk-dim{opacity:1}
+.mk-card{position:relative;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);width:min(980px,100%);max-height:calc(100vh - 48px);border-radius:16px;overflow:hidden;
+  background:var(--panel);box-shadow:inset 0 0 0 1px var(--line),0 40px 90px -30px rgba(0,0,0,.8);opacity:0;transform:translateY(14px) scale(.985);transition:opacity .35s ease,transform .5s cubic-bezier(.2,.7,.2,1)}
+.mk-sheet.on .mk-card{opacity:1;transform:none}
+.mk-stage{display:grid;place-items:center;padding:22px;background:rgba(0,0,0,.22);min-height:0}
+.mk-stage canvas{display:block;max-width:100%;max-height:calc(100vh - 92px);border-radius:10px;opacity:0;transition:opacity .25s}
+.mk-stage canvas.in{opacity:1}
+.mk-side{display:flex;flex-direction:column;gap:14px;padding:30px 28px 26px;min-width:0}
+.mk-eye{display:flex;align-items:center;gap:8px;font:500 12px/1 var(--sans);color:var(--mute)}
+.mk-eye i{display:grid;place-items:center;min-width:30px;height:20px;padding:0 6px;border-radius:6px;background:var(--acc);color:#0F0E0D;font:600 10.5px/1 var(--sans);font-style:normal}
+.mk-eye em{margin-left:auto;font-style:normal;color:var(--faint)}
+.mk-side h3{font:400 30px/1.08 var(--serif);letter-spacing:-.01em;color:var(--ivory)}
+.mk-meta{font:400 13px/1.45 var(--sans);color:var(--mute)}
+.mk-sw{display:flex;align-items:center;gap:10px;font:500 12.5px/1 var(--sans);color:var(--ivory);cursor:pointer}
+.mk-sw input{position:absolute;opacity:0;pointer-events:none}
+.mk-sw .tr{position:relative;width:30px;height:18px;border-radius:999px;background:rgba(244,242,236,.16);transition:background .2s}
+.mk-sw .tr::after{content:"";position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--ivory);transition:transform .25s cubic-bezier(.3,1.4,.4,1)}
+.mk-sw input:checked + .tr{background:var(--redline)}
+.mk-sw input:checked + .tr::after{transform:translateX(12px)}
+.mk-sw input:focus-visible + .tr{outline:2px solid var(--acc);outline-offset:2px}
+.mk-url{display:flex;gap:6px;padding:4px;border-radius:10px;background:rgba(0,0,0,.25);box-shadow:inset 0 0 0 1px var(--line);margin-top:4px}
+.mk-url input{flex:1;min-width:0;padding:0 8px;background:none;border:0;outline:0;font:400 12px/1 var(--sans);color:var(--mute);user-select:text;-webkit-user-select:text}
+.mk-acts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mk-acts .btn{justify-content:center}
+.mk-toast{min-height:16px;font:500 12px/1.3 var(--sans);color:var(--acc);opacity:0;transform:translateY(4px);transition:opacity .25s,transform .3s}
+.mk-toast.on{opacity:1;transform:none}
+.mk-x{position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--mute);box-shadow:inset 0 0 0 1px var(--line)}
+.mk-x:hover{color:var(--ivory);background:rgba(244,242,236,.07)}
+.mk-x svg{width:12px;height:12px}
+
+/* arriving from a shared link: the passage bracketed in red */
+.mk-flag{position:absolute;z-index:4;pointer-events:none;border-radius:3px;box-shadow:0 0 0 1.5px var(--redline),0 0 0 6px rgba(200,33,26,.12);background:rgba(200,33,26,.06);opacity:0;transform:scale(1.04);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.mk-flag.on{opacity:1;transform:none;animation:mkPulse 1.6s ease-in-out .6s 2}
+.mk-flag em{position:absolute;left:-1.5px;bottom:calc(100% + 6px);font:600 9px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;font-style:normal;color:#fff;background:var(--redline);padding:5px 8px;border-radius:999px;white-space:nowrap}
+@keyframes mkPulse{50%{box-shadow:0 0 0 1.5px var(--redline),0 0 0 12px rgba(200,33,26,.04)}}
+
+@media (max-width:900px){ .mk-card{grid-template-columns:1fr} .mk-stage canvas{max-height:46vh} }
+@media (max-width:760px){
+  .mk-tray{top:auto;bottom:56px;right:12px;flex-direction:row;width:auto;transform:none}
+  body.closed .mk-tray{transform:translateY(12px)}
+  .mk-tool{flex-direction:row;padding:4px 8px;width:auto}.mk-tool .lab kbd{display:none}
+  .mk-tool .slot{width:22px;height:40px}.mk-tool .nib-pen{transform:translate(-50%,-50%) rotate(90deg) scale(.19)}
+  .mk-tool .slip{width:26px;height:40px}.mk-tool .slip svg{width:20px}
+  .mk-tray .rule{width:1px;height:24px;margin:0 2px}
+  .mk-hint{display:none}
+}
+</style>
+</head>
+<body class="closed preload bg-a">
+<div class="amb" id="amb" aria-hidden="true"><b class="pic"></b><i></i><i></i></div>
+
+<div class="ist" id="ist" aria-hidden="true"><div class="mono" id="monoC"><svg class="mh" viewBox="0 0 93.83 83.96" preserveAspectRatio="none" aria-hidden="true"><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z"/></svg><img class="mf" src="img/monogram-flourish.webp" alt="" fetchpriority="high"></div><div class="wm"><span class="w" id="w1"><span class="ln">Year in Review</span></span><span class="w" id="w2"><span class="ln">MMXXVI</span></span></div></div>
+
+<nav class="index" id="index" aria-label="Contents">
+  <button class="ovbtn" id="ovBtn" aria-label="Overview of every spread"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3"><rect x=".65" y=".65" width="5.2" height="5.2" rx="1.2"/><rect x="8.15" y=".65" width="5.2" height="5.2" rx="1.2"/><rect x=".65" y="8.15" width="5.2" height="5.2" rx="1.2"/><rect x="8.15" y="8.15" width="5.2" height="5.2" rx="1.2"/></svg><span class="t">Overview</span><kbd class="t">O</kbd></button>
+  <ol id="toc"></ol>
+  <div class="turn" role="group" aria-label="Pages">
+    <button id="prev" aria-label="Previous spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8.5 3 4.5 7l4 4"/></svg></button>
+    <button id="next" aria-label="Next spread"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="m5.5 3 4 4-4 4"/></svg></button>
+    <span class="cnt" id="ixCnt"></span>
+  </div>
+</nav>
+<div class="preview" id="preview" aria-hidden="true"></div>
+
+<a class="lockup" id="home" href="#1" aria-label="Back to the cover"><img src="img/yir-lockup.svg" width="100" height="22" alt="Year in Review MMXXVI"></a>
+<aside class="landing" id="landing">
+  <p class="intro">A look back at the year when the future of legal AI became reality—and the people, progress, and possibilities that brought it to life.</p>
+</aside>
+<div class="mono landing-mark" id="landingMark" role="img" aria-label="Harvey"><svg class="mh" viewBox="0 0 93.83 83.96" preserveAspectRatio="none" aria-hidden="true"><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z"/></svg><img class="mf" src="img/monogram-flourish.webp" alt=""></div>
+<p class="hint" id="hint"></p>
+<div class="chip" id="chip" aria-live="polite"><b id="chipN"></b><span id="chipT"></span><em id="chipP"></em></div>
+<div class="acts"><a class="btn ghost" href="#">Book a demo</a><a class="btn solid" href="#">Get the full report <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 6h7M6.5 3l3 3-3 3"/></svg></a></div>
+<div class="prog" id="prog"><div class="segs" id="segs" aria-label="Chapters"></div><span class="cnt" id="cnt"></span></div>
+<div class="seg bgt" id="bgt" role="group" aria-label="Background"><span>Background</span><button data-bg="a" aria-pressed="true">A · Ambient</button><button data-bg="b" aria-pressed="false">B · Solid</button></div>
+
+<main class="stage" id="stage">
+  <div class="book" id="book">
+    <div class="case" aria-hidden="true"></div><i class="stack l" id="stackL" aria-hidden="true"></i><i class="stack r" id="stackR" aria-hidden="true"></i>
+    <!-- 1 · cover: shown as the 3D book below -->
+    <section class="spread cover" data-name="Cover"><div class="pg l"></div><div class="pg r"></div></section>
+
+    <!-- the spreads, exported from the Figma layout -->
+    <section class="spread" data-name="Contents" data-cap="Contents" data-toc="Contents"><div class="pg l"><img class="fp" src="spreads/01-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/01-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Introduction" data-cap="Introduction" data-toc="Introduction"><div class="pg l"><img class="fp" src="spreads/02-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/02-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance" data-toc="I|2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/03-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/03-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/04-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/04-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/05-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/05-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/06-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/06-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/07-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/07-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/08-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/08-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="2026 at a Glance" data-cap="2026 at a Glance"><div class="pg l"><img class="fp" src="spreads/09-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/09-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Industry Recognition" data-cap="Industry Recognition"><div class="pg l"><img class="fp" src="spreads/10-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/10-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey" data-toc="II|Research at Harvey"><div class="pg l"><img class="fp" src="spreads/11-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/11-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/12-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/12-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/13-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/13-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/14-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/14-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/15-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/15-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/16-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/16-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Research at Harvey" data-cap="Research at Harvey"><div class="pg l"><img class="fp" src="spreads/17-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/17-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="The Harvey Platform" data-cap="The Harvey Platform" data-toc="III|The Harvey Platform"><div class="pg l"><img class="fp" src="spreads/18-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/18-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="The Harvey Platform" data-cap="The Harvey Platform"><div class="pg l"><img class="fp" src="spreads/19-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/19-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="A Year of Progress" data-cap="A Year of Progress"><div class="pg l"><img class="fp" src="spreads/20-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/20-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="The Harvey Platform" data-cap="The Harvey Platform"><div class="pg l"><img class="fp" src="spreads/21-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/21-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="The Harvey Platform" data-cap="The Harvey Platform"><div class="pg l"><img class="fp" src="spreads/22-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/22-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="The Harvey Platform" data-cap="The Harvey Platform"><div class="pg l"><img class="fp" src="spreads/23-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/23-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Security" data-cap="Security"><div class="pg l"><img class="fp" src="spreads/24-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/24-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customers" data-cap="Customers" data-toc="IV|Customers"><div class="pg l"><img class="fp" src="spreads/25-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/25-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customers" data-cap="Customers"><div class="pg l"><img class="fp" src="spreads/26-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/26-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/27-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/27-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/28-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/28-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/29-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/29-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/30-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/30-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/31-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/31-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Customer Stories" data-cap="Customer Stories"><div class="pg l"><img class="fp" src="spreads/32-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/32-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform" data-toc="V|Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/33-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/33-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/34-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/34-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/35-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/35-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/36-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/36-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/37-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/37-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Beyond the Platform" data-cap="Beyond the Platform"><div class="pg l"><img class="fp" src="spreads/38-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/38-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Harvey Law Schools" data-cap="Harvey Law Schools" data-toc="VI|Harvey Law Schools"><div class="pg l"><img class="fp" src="spreads/39-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/39-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Harvey Law Schools" data-cap="Harvey Law Schools"><div class="pg l"><img class="fp" src="spreads/40-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/40-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Harvey Law Schools" data-cap="Harvey Law Schools"><div class="pg l"><img class="fp" src="spreads/41-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/41-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Harvey Law Schools" data-cap="Harvey Law Schools"><div class="pg l"><img class="fp" src="spreads/42-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/42-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Harvey Law Schools" data-cap="Harvey Law Schools"><div class="pg l"><img class="fp" src="spreads/43-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/43-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Responsible Business" data-cap="Responsible Business" data-toc="VII|Responsible Business"><div class="pg l"><img class="fp" src="spreads/44-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/44-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Responsible Business" data-cap="Responsible Business"><div class="pg l"><img class="fp" src="spreads/45-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/45-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Responsible Business" data-cap="Responsible Business"><div class="pg l"><img class="fp" src="spreads/46-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/46-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Responsible Business" data-cap="Responsible Business"><div class="pg l"><img class="fp" src="spreads/47-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/47-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Looking Ahead" data-cap="Looking Ahead" data-toc="VIII|Looking Ahead"><div class="pg l"><img class="fp" src="spreads/48-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/48-r.webp" alt="" decoding="async"></div></section>
+    <section class="spread" data-name="Looking Ahead" data-cap="Looking Ahead"><div class="pg l"><img class="fp" src="spreads/49-l.webp" alt="" decoding="async"></div><div class="pg r"><img class="fp" src="spreads/49-r.webp" alt="" decoding="async"></div></section>
+
+    <div class="spine" aria-hidden="true"></div>
+  </div>
+  <div class="turns" id="turns" aria-hidden="true"><div class="cast l" id="castL"></div><div class="cast r" id="castR"></div></div>
+
+  <div class="persp" id="persp">
+    <div class="gshadow" id="gshadow"></div><div class="gcontact" id="gcontact"></div>
+    <div class="lift" id="lift">
+      <div class="b3" id="b3" role="button" tabindex="0" aria-label="Open the Year in Review">
+        <div class="f bk"><svg viewBox="0 0 104 84" aria-hidden="true"><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z" fill="#FDFCE7"/></svg></div>
+        <div class="f sp" id="spC"><span>Harvey &nbsp;·&nbsp; Year in Review MMXXVI</span><i class="grain"></i></div>
+        <div class="f blk" id="blk"></div>
+        <div class="hinge" id="hinge">
+          <div class="f cv" id="cv">
+            <div class="bleed"><img src="img/hero.jpg" alt="Painting of a woman in period dress typing on a laptop at a draped table" fetchpriority="high" style="left:-480px;top:-300px;width:1495px;height:1419px"></div>
+            <p class="abs yir" style="left:206px;top:64px;width:148px;color:var(--cream)">Year in Review<br>MMXXVI</p>
+            <i class="grain"></i><i class="wear"></i><i class="groove"></i><i class="rim"></i><i class="glare" id="glare"></i>
+          </div>
+          <div class="f inside" id="inL"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="ov" id="ov" aria-hidden="true">
+  <div class="ov-grid" id="ovGrid"></div>
+</div>
+<div class="ov-chrome" aria-hidden="false">
+  <div class="ov-head"><span></span><button class="ov-close" id="ovClose">Close</button></div>
+  <img class="ov-lock" src="img/yir-lockup.svg" width="100" height="22" alt="Year in Review MMXXVI">
+  <div class="mono ov-mark" role="img" aria-label="Harvey"><svg class="mh" viewBox="0 0 93.83 83.96" preserveAspectRatio="none" aria-hidden="true"><path d="M51.85 83.96H93.83L81.49 71.61V12.35L93.83 0H51.85L64.2 12.35V34.57H29.63V12.35L41.98 0H16.6H13.31H0L8.3 8.3L12.35 12.35V71.61L0 83.96H41.98L29.63 71.61V49.39H64.2V71.61L51.85 83.96Z"/></svg><img class="mf" src="img/monogram-flourish.webp" alt=""></div>
+</div>
+<div class="cursor" id="cursor" aria-hidden="true"><span id="cursorT"></span></div>
+
+<nav class="vt seg" aria-label="Version"><a href="index.html">V1</a><a href="scroll.html">V2</a><a href="v3.html">V3</a><a href="v4.html">V4</a><a aria-current="page">V5</a></nav>
+<script src="fx.js"></script>
+<script>window.__clip=location.hash;</script>
+<script src="book5.js"></script>
+<script src="markup5.js"></script>
+<script src="bookmark5.js"></script>
+<script src="notes5.js"></script>
+</body>
+</html>
